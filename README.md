@@ -27,6 +27,10 @@ An end-to-end pipeline, not a dashboard:
 5. **Learn** — every action and outcome is logged back to the warehouse and feeds a
    feedback loop that tunes future scoring and intervention selection.
 
+## Scope
+
+We scoped to Thesis subscribers (449,902 of 566,743 total) for three reasons. First, Thesis has THESIS_FORMULAS coverage and a richer formula-based feature set that doesn't exist for Stasis — pooling the two lines would force us to drop those features or introduce brand-interaction terms that obscure rather than clarify. Second, the churn semantics differ: Stasis includes a children's line (Stasis Kids) with parent-driven purchase decisions, a distinct stimulant-sensitivity profile, and different household economics — modeling it alongside adult cognitive supplement subscribers would suppress signal in both populations. Third, Thesis is the larger line (79% of the base) and the one with the most structured data signal. The expansion path to Stasis is a separate model trained on the same pipeline architecture, with brand-specific archetype taxonomy — not a pooled model with a BRAND flag.
+
 ## Design stance
 
 - Deterministic code owns scoring, routing, eligibility, guardrails, and dispatch.
