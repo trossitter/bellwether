@@ -1,0 +1,227 @@
+[
+  {
+    "proposal": {
+      "subscriber_id": "g001",
+      "archetype": "price",
+      "action": "offer_discount",
+      "message": "Hi — we noticed your Thesis subscription is coming up for renewal. As a thank-you for sticking with us, we'd like to offer you 15% off your next cycle. No action needed; it applies automatically at checkout.",
+      "urgency_level": "medium"
+    },
+    "shap_context": {
+      "churn_prob": 0.72,
+      "top_features": ["price_float", "has_discount_history", "tenure_days"]
+    },
+    "human_mean": 4.5,
+    "human_notes": "Clear, on-brand, action matches the reason perfectly."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g002",
+      "archetype": "fatigue",
+      "action": "adjust_cadence",
+      "message": "Looks like you might have more Thesis than you need right now — that's actually pretty common. Want to push your next shipment back a few weeks? You stay subscribed, just on your schedule.",
+      "urgency_level": "low"
+    },
+    "shap_context": {
+      "churn_prob": 0.55,
+      "top_features": ["order_cadence_days", "days_since_last_order", "order_count"]
+    },
+    "human_mean": 4.75,
+    "human_notes": "Excellent tone. Directly names the problem without being accusatory."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g003",
+      "archetype": "efficacy",
+      "action": "share_testimonial",
+      "message": "We hear you — results can take time, and that's frustrating. A lot of our members notice the biggest shift around weeks 6–8. Here's what a few of them said after they stuck with it. Worth a read before making any changes.",
+      "urgency_level": "medium"
+    },
+    "shap_context": {
+      "churn_prob": 0.61,
+      "top_features": ["has_clarity", "ticket_count", "tenure_days"]
+    },
+    "human_mean": 4.0,
+    "human_notes": "Good empathy, reasonable specificity. Could name the subscriber's formula."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g004",
+      "archetype": "involuntary",
+      "action": "retry_payment",
+      "message": "Your last payment didn't go through — no worries, it happens. Update your payment details here and we'll take care of the rest. Your subscription stays active in the meantime.",
+      "urgency_level": "high"
+    },
+    "shap_context": {
+      "churn_prob": 0.85,
+      "top_features": ["next_charge_days", "order_count", "tenure_days"]
+    },
+    "human_mean": 4.25,
+    "human_notes": "Clear, low-pressure, correct urgency. 'No worries, it happens' is good tone."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g005",
+      "archetype": "stimulant",
+      "action": "recommend_alternative",
+      "message": "We noticed you've been on Motivation — which has some stimulant ingredients. If you're finding it a bit much, our Clarity formula is caffeine-free and might be a better fit. Happy to swap your next shipment at no charge.",
+      "urgency_level": "medium"
+    },
+    "shap_context": {
+      "churn_prob": 0.68,
+      "top_features": ["has_adverse_event", "has_motivation", "has_energy"]
+    },
+    "human_mean": 4.5,
+    "human_notes": "Specific to the subscriber's formula. Swap offer is practical and low-risk."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g006",
+      "archetype": "life_change",
+      "action": "pause_subscription",
+      "message": "Life gets busy — we get it. If now's not the right time for Thesis, you can pause your subscription for up to 3 months and pick back up whenever you're ready. No penalties, no pressure.",
+      "urgency_level": "low"
+    },
+    "shap_context": {
+      "churn_prob": 0.48,
+      "top_features": ["tenure_days", "days_since_last_order", "next_charge_days"]
+    },
+    "human_mean": 3.75,
+    "human_notes": "Good tone, correct action. Slightly generic — doesn't reference their tenure."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g007",
+      "archetype": "price",
+      "action": "explain_value",
+      "message": "We know $79 is a real commitment. Here's how most of our members think about it: that's about $2.60 a day for a stack that's built around your specific goals — not a generic multivitamin. If price is the concern, let us know and we can talk options.",
+      "urgency_level": "medium"
+    },
+    "shap_context": {
+      "churn_prob": 0.66,
+      "top_features": ["price_float", "tenure_days", "order_count"]
+    },
+    "human_mean": 4.0,
+    "human_notes": "The per-day framing is effective. Ends with an open door, not a hard sell."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g008",
+      "archetype": "efficacy",
+      "action": "offer_consult",
+      "message": "We'd love to connect you with one of our advisors — they've helped a lot of members who weren't feeling the effects adjust their stack or timing. No charge, just a quick call. Interested?",
+      "urgency_level": "medium"
+    },
+    "shap_context": {
+      "churn_prob": 0.59,
+      "top_features": ["has_clarity", "no_quiz_proxy", "ticket_count"]
+    },
+    "human_mean": 3.5,
+    "human_notes": "Reasonable but the message is vague. What would the advisor actually do?"
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g009",
+      "archetype": "fatigue",
+      "action": "pause_subscription",
+      "message": "You can pause anytime. We'll stop shipments until you're ready, and your subscription stays in place — so you don't have to re-do the quiz or restart. Just come back when your supply runs low.",
+      "urgency_level": "low"
+    },
+    "shap_context": {
+      "churn_prob": 0.52,
+      "top_features": ["order_cadence_days", "order_count", "days_since_last_order"]
+    },
+    "human_mean": 4.25,
+    "human_notes": "Mentions the quiz, which adds a nice touch of product familiarity."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g010",
+      "archetype": "price",
+      "action": "offer_discount",
+      "message": "SPECIAL OFFER: Cancel now and lose your discount forever! Our records show your account is at risk. Please act immediately to secure your subscriber rate before it expires.",
+      "urgency_level": "high"
+    },
+    "shap_context": {
+      "churn_prob": 0.41,
+      "top_features": ["price_float", "has_discount_history", "tenure_days"]
+    },
+    "human_mean": 1.0,
+    "human_notes": "Panicked, threatening tone. Completely off-brand. High urgency for low-risk subscriber."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g011",
+      "archetype": "efficacy",
+      "action": "share_testimonial",
+      "message": "Many customers love our products. Here are some reviews. We hope you enjoy your subscription.",
+      "urgency_level": "low"
+    },
+    "shap_context": {
+      "churn_prob": 0.63,
+      "top_features": ["has_confidence", "ticket_count", "has_adverse_event"]
+    },
+    "human_mean": 1.5,
+    "human_notes": "Generic to the point of useless. No reference to subscriber or their concern."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g012",
+      "archetype": "stimulant",
+      "action": "recommend_alternative",
+      "message": "If you've been experiencing side effects from your current formula, switching to a caffeine-free option may help. Our Clarity (Caffeine-Free) formula offers the same cognitive support without stimulants. We can process a swap with your next order.",
+      "urgency_level": "medium"
+    },
+    "shap_context": {
+      "churn_prob": 0.71,
+      "top_features": ["has_adverse_event", "has_energy", "has_motivation"]
+    },
+    "human_mean": 4.0,
+    "human_notes": "Correct and clear. Slightly clinical in tone but informative."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g013",
+      "archetype": "involuntary",
+      "action": "update_payment_method",
+      "message": "We weren't able to process your most recent payment. To keep your subscription active, please update your payment information at your earliest convenience.",
+      "urgency_level": "high"
+    },
+    "shap_context": {
+      "churn_prob": 0.88,
+      "top_features": ["next_charge_days", "order_count", "order_cadence_days"]
+    },
+    "human_mean": 3.0,
+    "human_notes": "Accurate but cold. 'At your earliest convenience' feels corporate. Missing warmth."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g014",
+      "archetype": "life_change",
+      "action": "reduce_quantity",
+      "message": "Sometimes one formula is enough — especially if life's gotten busier or your goals have shifted. We can reduce your subscription to a single formula and lower your monthly cost. Easy change, no re-enrollment.",
+      "urgency_level": "low"
+    },
+    "shap_context": {
+      "churn_prob": 0.51,
+      "top_features": ["tenure_days", "next_charge_days", "order_count"]
+    },
+    "human_mean": 4.0,
+    "human_notes": "Practical and empathetic. Addresses real subscriber flexibility."
+  },
+  {
+    "proposal": {
+      "subscriber_id": "g015",
+      "archetype": "fatigue",
+      "action": "adjust_cadence",
+      "message": "We see you're well-stocked — that's a good problem to have. Stretch your subscription to every 6 weeks instead of every 4, and your supply catches up with your intake. Takes 10 seconds to adjust.",
+      "urgency_level": "low"
+    },
+    "shap_context": {
+      "churn_prob": 0.58,
+      "top_features": ["order_cadence_days", "days_since_last_order", "order_count"]
+    },
+    "human_mean": 4.75,
+    "human_notes": "Best in class. Specific numbers, practical solution, confident tone."
+  }
+]
