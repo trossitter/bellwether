@@ -7,6 +7,10 @@ A *bellwether* is the lead animal whose movement foretells the flock's — the n
 for a system whose job is to read leading indicators and act **before** a subscriber
 cancels, rather than trying to win them back after.
 
+Bellwether shifts TakeThesis from reactive saves to proactive prediction and autonomous intervention. It identifies which subscribers are likely to cancel in the next 30–60 days, routes each one to the most relevant intervention archetype, and drafts a personalized outreach — without requiring a human in the loop for every decision.
+
+The design philosophy is simple: machine learning handles the prediction, deterministic code handles the routing and guardrails, and the language model handles only the judgment calls it's genuinely suited for — which intervention fits this subscriber, and what to say.
+
 ## What it does
 
 An end-to-end pipeline, not a dashboard:
