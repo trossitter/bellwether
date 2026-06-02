@@ -41,7 +41,7 @@ from scipy.stats import spearmanr
 
 from bellwether.eval.contracts import InterventionProposal
 
-JUDGE_MODEL = "claude-haiku-4-5-20251001"
+JUDGE_MODEL = "claude-sonnet-4-6"
 
 _RUBRIC_SYSTEM = """\
 You are evaluating AI-generated subscriber retention messages for a DTC supplements brand called Thesis.
@@ -157,7 +157,7 @@ class JudgeHarness:
         user_content = _build_user_message(proposals, shap_contexts)
         response = self._client.messages.create(
             model=self._model,
-            max_tokens=1024,
+            max_tokens=4096,
             system=_RUBRIC_SYSTEM,
             messages=[{"role": "user", "content": user_content}],
         )
@@ -229,15 +229,20 @@ def _build_user_message(
 
 
 def _parse_scores(raw: str, expected: int) -> list[JudgeScore]:
+    # Strip markdown code fences if present
+    cleaned = raw.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("\n", 1)[1]  # drop opening fence line
+        cleaned = cleaned.rsplit("```", 1)[0]  # drop closing fence
+        cleaned = cleaned.strip()
     try:
-        data = json.loads(raw)
+        data = json.loads(cleaned)
     except json.JSONDecodeError:
-        # Try extracting JSON array from the text
-        start = raw.find("[")
-        end = raw.rfind("]") + 1
+        start = cleaned.find("[")
+        end = cleaned.rfind("]") + 1
         if start == -1 or end == 0:
             raise ValueError(f"Judge returned unparseable output: {raw[:200]}")
-        data = json.loads(raw[start:end])
+        data = json.loads(cleaned[start:end])
 
     scores = []
     for item in data:
