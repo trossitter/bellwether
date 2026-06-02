@@ -1,0 +1,25 @@
+# Secrets — never commit
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Data & model artifacts (kept in the warehouse / object store, not git)
+data/
+models/
+*.pkl
+*.parquet
+*.csv
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
