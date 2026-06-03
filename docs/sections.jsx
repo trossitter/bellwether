@@ -17,12 +17,12 @@ function Cover({ fleet }) {
         </Reveal>
         <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
         <Reveal as="p" className="cover-line" delay={2}>
-          Thesis built a product for minds that want control.<br />
-          <b>Bellwether keeps them.</b>
+          They chose Thesis because they want to perform better.<br />
+          <b>Know when they're about to stop — before they do.</b>
         </Reveal>
       </div>
       <div className="cover-photo">
-        <img src="bellwether_product_still_life.png" alt="" style={{
+        <img src="bellwether_product_still_life_lions_mane.png" alt="" style={{
           position:"absolute",inset:0,width:"100%",height:"100%",
           objectFit:"cover",objectPosition:"center"
         }} />
@@ -52,8 +52,8 @@ function FindingSection({ fleet, archetypes }) {
           <div className="pull-label"><b>subscribers at risk</b> this month, across <b>{fmt(fleet.scored)}</b> scored</div>
         </Reveal>
         <Reveal as="figure" className="finding-fig" delay={2}>
-          <img src="chart_4_urgency.png" alt="Urgency rate by churn archetype"
-            style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"left center"}} />
+          <img src="bellwether_apothecary_workshop.png" alt=""
+            style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center"}} />
           <figcaption>76% of Payment Declined subscribers are at imminent risk · most addressable without a discount</figcaption>
         </Reveal>
       </div>
