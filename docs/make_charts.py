@@ -81,7 +81,7 @@ C1_SUBTITLE  = "Active Thesis subscribers · risk tier by P(churn within 30 days
 C1_YLABEL    = "Subscribers (thousands)"
 C1_FOOTNOTE  = "Risk tiers: Low P < 0.10  |  Medium 0.10 to P < 0.50  |  High P >= 0.50"
 C1_OUT       = Path(__file__).parent / "chart_1_subscribers.png"
-C1_FIG_SIZE  = (9, 5.5)
+C1_FIG_SIZE  = (10.5, 5.5)   # wider to give callout labels room on the right
 BAR_W        = 0.55
 
 COLOR_LOW    = "#CCCCDD"
@@ -109,12 +109,43 @@ def chart_1():
         ax.text(x[i], tot + 0.3, f"{raw:,}", ha="center", va="bottom",
                 fontsize=8.5, color=TEXT, fontweight="600")
 
+    # Right-side callout labels pointing into the medium+high tier
+    # Shows count + % of that archetype actually at risk
+    x_label = len(ARCH_ORDER_BAR) - 0.1          # just past the last bar
+    ax.set_xlim(right=len(ARCH_ORDER_BAR) + 1.6)  # make room for labels
+
+    # Stagger text y-positions to avoid overlap; arrow points to mid of med+hi band
+    callout_positions = {
+        "price":       totals_k[ARCH_ORDER_BAR.index("price")] - 0.5,
+        "life_change": totals_k[ARCH_ORDER_BAR.index("life_change")] - 0.3,
+        "involuntary": 4.5,
+        "efficacy":    3.0,
+        "fatigue":     1.5,
+    }
+
+    for arch in ARCH_ORDER_BAR:
+        i       = ARCH_ORDER_BAR.index(arch)
+        med_hi  = summary[arch]["medium"] + summary[arch]["high"]
+        pct     = med_hi / summary[arch]["total"] * 100
+        mid_y   = (low_vals[i] + (med_vals[i] + hi_vals[i]) / 2)  # midpoint of risk band
+        text_y  = callout_positions[arch]
+        color   = ARCH_COLORS[arch]
+
+        ax.annotate(
+            f"{med_hi:,} at risk  ({pct:.0f}%)",
+            xy=(x[i] + BAR_W / 2, mid_y),
+            xytext=(x_label + 0.55, text_y),
+            fontsize=8, color=color, fontweight="600", va="center",
+            arrowprops=dict(arrowstyle="-", color=color, lw=0.9,
+                            connectionstyle="arc3,rad=0.0"),
+        )
+
     ax.set_xticks(x)
     ax.set_xticklabels([ARCH_LABELS[a] for a in ARCH_ORDER_BAR], color=TEXT, fontsize=9)
     ax.set_ylabel(C1_YLABEL, color=TEXT_MUTED, fontsize=9, labelpad=8)
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{v:.0f}"))
 
-    ax.legend(fontsize=8, frameon=False, labelcolor=TEXT, loc="upper right")
+    ax.legend(fontsize=8, frameon=False, labelcolor=TEXT, loc="upper left")
 
     ax.set_title(C1_TITLE,    color=TEXT,       fontsize=13, fontweight="bold", pad=14, loc="left")
     ax.set_xlabel(C1_SUBTITLE, color=TEXT_MUTED, fontsize=8.5, labelpad=10)
@@ -237,7 +268,7 @@ def chart_3():
             peak_i = int(np.argmax(smoothed))
             ax.plot(dates[peak_i], smoothed[peak_i],
                     "o", color=color, markersize=7, zorder=5)
-            end_label = "  Efficacy (insignificant since 2023)  0%"
+            end_label = "  Efficacy  0%"
         else:
             end_label = f"  {ARCH_LABELS[arch]}  {final_val:.0f}%"
 
