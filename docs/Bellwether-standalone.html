@@ -1488,6 +1488,10 @@ function Cover({ fleet }) {
         </Reveal>
       </div>
       <div className="cover-photo">
+        <img src="bellwether_product_still_life.png" alt="" style={{
+          position:"absolute",inset:0,width:"100%",height:"100%",
+          objectFit:"cover",objectPosition:"center"
+        }} />
         <div className="cover-foot">
           <div className="cover-foot-in">
             <Reveal className="cover-scored" delay={3}>
@@ -1514,6 +1518,8 @@ function FindingSection({ fleet, archetypes }) {
           <div className="pull-label"><b>subscribers at risk</b> this month, across <b>{fmt(fleet.scored)}</b> scored</div>
         </Reveal>
         <Reveal as="figure" className="finding-fig" delay={2}>
+          <img src="chart_4_urgency.png" alt="Urgency rate by churn archetype"
+            style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"left center"}} />
           <figcaption>Scored nightly · five behavioral archetypes</figcaption>
         </Reveal>
       </div>
@@ -1558,10 +1564,14 @@ function FindingSection({ fleet, archetypes }) {
 
 // ───────────────────────── Method (4 questions) ─────────────────────────
 const PILLARS = [
-{ n: "01", q: "Who", d: "Which subscribers are slipping — ranked by risk and routed to a rep for review." },
-{ n: "02", q: "Why", d: "The behavioral signals behind each score, weighted and legible. Not a black box." },
-{ n: "03", q: "What", d: "A specific, on-brand action matched to the cause — not a blanket coupon." },
-{ n: "04", q: "Learn", d: "A holdout and a read-out date, so every action teaches the next one." }];
+  { n: "01", q: "Who",
+    d: "26,584 subscribers scored each cycle. Order cadence, billing timing, formula history, and email engagement combine into a calibrated churn probability for every one. The top 41 escalate to a human rep this cycle." },
+  { n: "02", q: "Why",
+    d: "Every score comes with an explanation — the weighted signals driving it and the behavioral archetype they map to. You approve a reasoned recommendation, not a black-box output." },
+  { n: "03", q: "What",
+    d: "The archetype determines the action. A payment decline gets a frictionless card-update link — not a win-back coupon. Price anxiety gets a cost-per-day reframe. Overstock gets a cadence adjustment. The right fix for the actual cause." },
+  { n: "04", q: "Learn",
+    d: "Every approved action creates a natural experiment: 10% held back as a control, a read-out date set. The model's next training run sees real labeled outcomes. Each cycle, the system gets incrementally sharper." }];
 
 function MethodSection() {
   return (
@@ -1569,8 +1579,10 @@ function MethodSection() {
       <div className="inner">
         <div className="method-intro">
           <Reveal>
-            <image-slot id="neuron" class="method-fig" shape="rounded" radius="14"
-              placeholder="Drop a neuron / mechanism image"></image-slot>
+            <img src="chart_3_trends.png" alt="Churn trend lines 2022–2026"
+              className="method-fig"
+              style={{width:"100%",height:"308px",objectFit:"cover",objectPosition:"top",
+                      borderRadius:"14px",boxShadow:"var(--shadow)"}} />
           </Reveal>
           <Reveal className="frame-head" delay={1}>
             <span className="eyebrow">02 · The method</span>
@@ -1823,6 +1835,7 @@ function CloseSection({ fleet }) {
         <em>Who</em><span className="arrow">→</span><em>Why</em><span className="arrow">→</span><em>What</em><span className="arrow">→</span><em>Learn</em><span className="arrow">↻</span>
       </Reveal>
       <Reveal as="p" className="close-sub" delay={2}>
+        Right now, dispatch is simulated — no live sends. The only gap between this and Klaviyo is swapping one adapter class. When outcomes land — did they churn after the message? — they feed the next training run. The system gets sharper every cycle.
       </Reveal>
       <Reveal as="div" className="close-meta" delay={3}>
         <DotMark size={14} color="var(--ink-3)" />
