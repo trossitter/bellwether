@@ -54,7 +54,7 @@ function FindingSection({ fleet, archetypes }) {
         <Reveal as="figure" className="finding-fig" delay={2}>
           <img src="bellwether_bottle_and_vial.png" alt=""
             style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"38% center"}} />
-          <figcaption>76% of Payment Declined subscribers are at imminent risk · most addressable without a discount</figcaption>
+          <figcaption>Five intervention archetypes</figcaption>
         </Reveal>
       </div>
 
@@ -214,12 +214,15 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
           <div className="roster-foot">Showing top <b>5</b> of <b>{fleet.reviewQueue}</b> flagged for review</div>
         </aside>
 
-        {/* detail */}
-        <div className="detail" key={selectedId}>
+        {/* detail — two columns: main content | at-a-glance square */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 192px",gap:"24px",alignItems:"start"}} key={selectedId}>
           <div className="detail-main">
-            <div className="dos-head">
-              <div className="dos-id">
-                <div className="dos-arch">
+
+            {/* name + gauge side by side at top */}
+            <div style={{display:"flex",alignItems:"center",gap:"20px",marginBottom:"4px"}}>
+              <RiskGauge score={sub.score} projected={projectedRisk(sub)} showProjected={st === "approved"} variant={gaugeStyle} size={100} stroke={8} />
+              <div style={{flex:1,minWidth:0}}>
+                <div className="dos-arch" style={{marginBottom:"6px"}}>
                   <span className="tag">{sub.archetype}</span>
                   {(() => {
                     const more = (prevalence[sub.archetypeKey]?.atRisk || 1) - 1;
@@ -231,29 +234,19 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
                         textDecoration:"underline",textDecorationStyle:"dotted",
                         textUnderlineOffset:"3px"
                       }}>
-                        {more.toLocaleString()} more with this reason →
+                        {more.toLocaleString()} more →
                       </button>
                     ) : null;
                   })()}
                 </div>
                 <h3 className="dos-name">{sub.name}</h3>
                 <div className="dos-loc">{sub.location}</div>
-              </div>
-              {/* at a glance — shares the header band with the subscriber (v1 layout) */}
-              <div className="glance">
-                <div className="gfact"><div className="gfact-k">Product</div><div className="gfact-v">{sub.formula}</div></div>
-                <div className="gfact"><div className="gfact-k">Cadence</div><div className="gfact-v">{sub.cadence}</div></div>
-                <div className="gfact"><div className="gfact-k">Tenure</div><div className="gfact-v">{sub.tenureLabel}</div></div>
-                <div className="gfact"><div className="gfact-k">Lifetime value</div><div className="gfact-v accent">${fmt(sub.ltv)}</div></div>
-                <div className="gfact"><div className="gfact-k">Next renewal</div><div className="gfact-v">{sub.nextRenewal}</div></div>
-                <div className="gfact"><div className="gfact-k">Plan</div><div className="gfact-v">${fleet.pricePoint}/mo</div></div>
+                <Delta now={sub.score} prev={sub.prevScore} />
               </div>
             </div>
-            <p className="dos-headline" style={{marginTop:"10px"}}>{sub.headline}</p>
 
-            {/* ACTION FIRST — message + approve/hold is the whole point */}
+            {/* ACTION — message + approve/hold immediately, no header needed */}
             <div className="block">
-              <div className="b-eyebrow"><span className="n">01</span><span className="t">Recommended action</span></div>
               <div className={`action ${st ? "action-decided" : ""}`}>
                 <div className="action-top">
                   <span className="action-kind">{sub.action.kind}</span>
@@ -310,7 +303,7 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
                   </summary>
                   <div style={{marginTop:"12px"}}>
                     <p className="action-detail">{sub.action.detail}</p>
-                    <div className="action-why"><span className="why-tag">Why this, not a discount</span>{sub.action.why}</div>
+                    <div className="action-why"><span className="why-tag">Why this, not a discount</span>{sub.action.why}<br/><br/><em style={{color:"var(--ink-3)",fontStyle:"italic",fontSize:"13px"}}>{sub.headline}</em></div>
                     <div className="action-feet">
                       <div><div className="feet-k">Effort</div><div className="feet-v">{sub.action.effort}</div></div>
                       <div><div className="feet-k">Cost</div><div className="feet-v">{sub.action.cost}</div></div>
@@ -376,6 +369,18 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
               </div>
             </div>
           </div>
+
+          {/* At a glance — smaller square card, right column */}
+          <aside className="repcard" style={{position:"sticky",top:"78px"}}>
+            <div className="rep-hd"><span className="rep-avatar2">{sub.initials}</span><b>At a glance</b></div>
+            <div className="rep-list">
+              <div className="rep-row"><span className="rep-k">Product</span><span className="rep-v" style={{fontSize:"13px"}}>{sub.formula}</span></div>
+              <div className="rep-row"><span className="rep-k">Cadence</span><span className="rep-v" style={{fontSize:"13px"}}>{sub.cadence}</span></div>
+              <div className="rep-row"><span className="rep-k">Tenure</span><span className="rep-v" style={{fontSize:"13px"}}>{sub.tenureLabel}</span></div>
+              <div className="rep-row"><span className="rep-k">Lifetime value</span><span className="rep-v accent" style={{fontSize:"13px"}}>${fmt(sub.ltv)}</span></div>
+              <div className="rep-row"><span className="rep-k">Next renewal</span><span className="rep-v" style={{fontSize:"13px"}}>{sub.nextRenewal}</span></div>
+            </div>
+          </aside>
         </div>
       </div>
     </section>);
