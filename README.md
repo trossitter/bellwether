@@ -9,6 +9,10 @@ Bellwether shifts DTC Supplement company Thesis from reactive saves to proactive
 
 The design philosophy: advanced statistics handles the prediction, deterministic code handles the routing and guardrails, and the language model handles only the judgment calls it's genuinely suited for — which intervention fits this subscriber, and what to say.
 
+## Archetypes
+
+![Share of Thesis cancellations by known reason, by quarter, 2022–2026](docs/chart_3_trends.png)
+
 ## What it does
 
 An end-to-end pipeline, not a dashboard:
@@ -51,9 +55,6 @@ The slice is built to widen without a rewrite. Stasis is the next population: sa
 
 Deterministic code owns routing, eligibility, guardrails, and dispatch; a gradient-boosted model + SHAP owns risk; the language model is confined to the two judgment calls — which intervention fits, and what to say. That division is what makes this an agent, not a rules engine. See [ADR-0003](docs/adr/0003-deterministic-core-llm-for-judgment.md).
 
-## Archetypes
-
-![Share of Thesis cancellations by known reason, by quarter, 2022–2026](docs/chart_3_trends.png)
 
 
 
