@@ -39,7 +39,7 @@ The partner sells across two subscription lines — **Thesis**, its nootropic co
 | Thesis subscriptions | 449,902 | In-scope line, full history |
 | **Active subs, scored** | **26,584** | `STATUS = 'active'` at the 2026-04-21 snapshot |
 
-We score the active book and train on inactive history — past leavers supply the labels. See [ADR-0002](docs/adr/0002-score-the-active-book-train-on-history.md).
+The ~423K inactive Thesis subscriptions are where the model *learns*: the label builder walks back to historical observation points (365 / 270 / 180 / 90 days before the snapshot) and, at each, marks who was active then and who cancelled within the horizon. Past leavers are the labels; live signal is scored.
 
 Of the 26,584 scored, **2,247 (8.5%)** clear the P ≥ 0.10 intervention threshold and **94 (0.35%)** clear P ≥ 0.50 — calibrated probabilities, not rank cutoffs (see *Risk thresholds*).
 
@@ -49,7 +49,11 @@ The slice is built to widen without a rewrite. Stasis is the next population: sa
 
 ## Design stance
 
-Deterministic code owns routing, eligibility, guardrails, and dispatch; a gradient-boosted model + SHAP owns risk; the language model is confined to the two judgment calls — which intervention fits, and what to say. That division is what makes this an agent, not a rules engine. See [ADR-0003](docs/adr/0003-deterministic-core-llm-for-judgment.md).
+- Deterministic code owns scoring, routing, eligibility, guardrails, and dispatch.
+- The model is used only for the judgment call: which intervention fits, and what to
+  say. That is what makes this an agent rather than a rules engine.
+- Gradient-boosted trees + SHAP for risk (explainable, full-scale), not a fine-tuned
+  model where a simpler one suffices.
 
 ## Archetypes
 
@@ -59,10 +63,12 @@ Deterministic code owns routing, eligibility, guardrails, and dispatch; a gradie
 
 ## Risk thresholds
 
-Risk is a calibrated probability, so the count at risk is whatever clears the bar, not a fixed top-N, and the bands are tunable without retraining. See [ADR-0004](docs/adr/0004-calibrated-probabilities-not-rank-cutoffs.md).
+The model is gradient-boosted trees with an isotonic calibration layer, so a score of 0.10 means roughly a 10% chance of cancelling within the 30-day horizon — and the count of high-risk subscribers is whatever genuinely clears the bar, not a fixed top-N.
 
 - **P ≥ 0.50 — high.** More likely than not to cancel; 94 subscribers at the snapshot.
 - **P ≥ 0.10 — medium.** Worth an intervention; 2,247 subscribers.
+
+Because the bands are probability cutoffs, they are tunable without retraining: raising the floor narrows outreach to the most certain cases, lowering it widens the net.
 
 ## Brand voice — chosen by A/B test
 
