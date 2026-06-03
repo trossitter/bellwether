@@ -44,9 +44,9 @@ ARCH_COLORS = {
 ARCH_LABELS = {
     "price":       "Price",
     "efficacy":    "Efficacy",
-    "fatigue":     "Overstock / Fatigue",
+    "fatigue":     "Product Overstock",
     "life_change": "Life Change",
-    "involuntary": "Involuntary (Payment)",
+    "involuntary": "Payment Declined",
 }
 
 def _apply_light_theme(ax):
@@ -218,16 +218,34 @@ def chart_3():
     ax.set_axisbelow(True)
 
     for arch in ARCH_ORDER_TREND:
-        shares = arch_shares[arch]
-        color  = ARCH_COLORS[arch]
-        ax.plot(dates, shares, color=color, linewidth=2.2, zorder=4,
-                marker="o", markersize=3.5, markerfacecolor=color)
+        raw_shares = arch_shares[arch]
+        color      = ARCH_COLORS[arch]
 
-        # End label (right side)
-        final_val = shares[-1]
-        if final_val > 0.5:
-            ax.text(dates[-1], final_val, f"  {ARCH_LABELS[arch]}  {final_val:.0f}%",
+        # 3-quarter rolling average — smooth without losing the overall trend
+        window = 3
+        smoothed = []
+        for i in range(len(raw_shares)):
+            lo = max(0, i - window // 2)
+            hi = min(len(raw_shares), lo + window)
+            smoothed.append(np.mean(raw_shares[lo:hi]))
+
+        ax.plot(dates, smoothed, color=color, linewidth=2.2, zorder=4)
+
+        # Label at the peak (handles lines that end near zero)
+        peak_i     = int(np.argmax(smoothed))
+        peak_val   = smoothed[peak_i]
+        final_val  = smoothed[-1]
+
+        # Place label at right end if final > 2%, otherwise at peak
+        if final_val >= 2:
+            lx, ly = dates[-1], final_val
+            ax.text(lx, ly, f"  {ARCH_LABELS[arch]}  {final_val:.0f}%",
                     ha="left", va="center", fontsize=8.5,
+                    color=color, fontweight="600")
+        elif peak_val >= 2:
+            lx, ly = dates[peak_i], peak_val
+            ax.text(lx, ly + 1.5, f"{ARCH_LABELS[arch]}  {peak_val:.0f}%",
+                    ha="center", va="bottom", fontsize=8.5,
                     color=color, fontweight="600")
 
     # X-axis: quarterly dates, labelled by year
