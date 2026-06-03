@@ -249,40 +249,11 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
                 <div className="gfact"><div className="gfact-k">Plan</div><div className="gfact-v">${fleet.pricePoint}/mo</div></div>
               </div>
             </div>
-            <p className="dos-headline">{sub.headline}</p>
+            <p className="dos-headline" style={{marginTop:"10px"}}>{sub.headline}</p>
 
-            {/* 01 who / how risky */}
+            {/* ACTION FIRST — message + approve/hold is the whole point */}
             <div className="block">
-              <div className="b-eyebrow"><span className="n">01</span><span className="t">Who & how risky</span></div>
-              <div className="risk-row">
-                <RiskGauge score={sub.score} projected={projectedRisk(sub)} showProjected={st === "approved"} variant={gaugeStyle} />
-                <div className="risk-side">
-                  <Delta now={sub.score} prev={sub.prevScore} />
-                  <div className="risk-scale">
-                    <span><i style={{ background: "var(--terracotta)" }} />High ≥ 60</span>
-                    <span><i style={{ background: "var(--gold)" }} />Elevated 30–59</span>
-                    <span><i style={{ background: "var(--sage)" }} />Watch &lt; 30</span>
-                  </div>
-                  {st === "approved" &&
-                  <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
-                      <span> ({TIER[tierOf(projectedRisk(sub))].label.toLowerCase()})</span></div>
-                  }
-                </div>
-              </div>
-            </div>
-
-            {/* 02 why */}
-            <div className="block">
-              <div className="b-eyebrow"><span className="n">02</span><span className="t">Why it's happening</span></div>
-              <div className="factors">
-                {sub.factors.map((f, i) => <FactorBar key={i} {...f} max={maxWeight} />)}
-              </div>
-              <div className="factors-key">+ adds to risk · − protective signal</div>
-            </div>
-
-            {/* 03 action */}
-            <div className="block">
-              <div className="b-eyebrow"><span className="n">03</span><span className="t">Recommended action</span></div>
+              <div className="b-eyebrow"><span className="n">01</span><span className="t">Recommended action</span></div>
               <div className={`action ${st ? "action-decided" : ""}`}>
                 <div className="action-top">
                   <span className="action-kind">{sub.action.kind}</span>
@@ -348,6 +319,40 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
                 </details>
               </div>
             </div>
+
+            {/* Risk + factors — supporting context, collapsed by default */}
+            <details style={{marginTop:"16px",borderTop:"1px solid var(--hairline)",paddingTop:"16px"}}>
+              <summary style={{fontSize:"12px",fontFamily:"var(--font-mono)",letterSpacing:"0.08em",
+                textTransform:"uppercase",color:"var(--ink-3)",cursor:"pointer",
+                userSelect:"none",marginBottom:"0"}}>
+                Risk signal &amp; factors
+              </summary>
+              <div style={{marginTop:"16px"}}>
+                <div style={{marginBottom:"20px"}}>
+                  <div className="b-eyebrow" style={{marginBottom:"12px"}}><span className="n">02</span><span className="t">How risky</span></div>
+                  <div className="risk-row">
+                    <RiskGauge score={sub.score} projected={projectedRisk(sub)} showProjected={st === "approved"} variant={gaugeStyle} />
+                    <div className="risk-side">
+                      <Delta now={sub.score} prev={sub.prevScore} />
+                      <div className="risk-scale">
+                        <span><i style={{ background: "var(--terracotta)" }} />High ≥ 60</span>
+                        <span><i style={{ background: "var(--gold)" }} />Elevated 30–59</span>
+                        <span><i style={{ background: "var(--sage)" }} />Watch &lt; 30</span>
+                      </div>
+                      {st === "approved" &&
+                        <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
+                          <span> ({TIER[tierOf(projectedRisk(sub))].label.toLowerCase()})</span></div>
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div className="b-eyebrow" style={{marginBottom:"12px"}}><span className="n">03</span><span className="t">Why it's happening</span></div>
+                <div className="factors">
+                  {sub.factors.map((f, i) => <FactorBar key={i} {...f} max={maxWeight} />)}
+                </div>
+                <div className="factors-key">+ adds to risk · − protective signal</div>
+              </div>
+            </details>
 
             {/* 04 measure */}
             <div className="block">
