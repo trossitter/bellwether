@@ -60,7 +60,6 @@ The slice is built to widen without a rewrite. Stasis is the next population: sa
 ![Share of Thesis cancellations by known reason, by quarter, 2022–2026](docs/chart_3_trends.png)
 
 
-Honest caveat (fail loud): this is the share *among cancellations with a known reason*. If reason-capture coverage itself shifts over time, the mix can move for collection reasons as well as behavioral ones. We read the chart as direction-of-travel evidence, not as precise quarter-over-quarter magnitudes.
 
 ## Risk thresholds
 
