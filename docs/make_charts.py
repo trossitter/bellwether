@@ -81,10 +81,10 @@ C1_SUBTITLE  = "Active Thesis subscribers · risk tier by P(churn within 30 days
 C1_YLABEL    = "Subscribers (thousands)"
 C1_FOOTNOTE  = "Risk tiers: Low P < 0.10  |  Medium 0.10 to P < 0.50  |  High P >= 0.50"
 C1_OUT       = Path(__file__).parent / "chart_1_subscribers.png"
-C1_FIG_SIZE  = (10.5, 5.5)   # wider to give callout labels room on the right
+C1_FIG_SIZE  = (9, 5.5)
 BAR_W        = 0.55
 
-COLOR_LOW    = "#CCCCDD"
+COLOR_LOW    = "#C8CDD8"   # neutral — not archetype-specific
 COLOR_MEDIUM = "#F5A623"
 COLOR_HIGH   = "#C95F5F"
 
@@ -100,52 +100,40 @@ def chart_1():
     hi_vals  = np.array([summary[a]["high"]   for a in ARCH_ORDER_BAR], dtype=float) / 1000
     totals_k = low_vals + med_vals + hi_vals
 
-    ax.bar(x, low_vals,              BAR_W, color=COLOR_LOW,    label="Low risk",    zorder=3)
-    ax.bar(x, med_vals, BAR_W, bottom=low_vals,              color=COLOR_MEDIUM, label="Medium risk", zorder=3, alpha=0.9)
-    ax.bar(x, hi_vals,  BAR_W, bottom=low_vals + med_vals,   color=COLOR_HIGH,   label="High risk",   zorder=3, alpha=0.95)
+    # All bars same neutral base — only risk tier adds color
+    ax.bar(x, low_vals,            BAR_W, color=COLOR_LOW,    label="Low risk   (P < 0.10)",        zorder=3)
+    ax.bar(x, med_vals, BAR_W, bottom=low_vals,            color=COLOR_MEDIUM, label="Medium risk   (0.10–0.50)", zorder=3, alpha=0.92)
+    ax.bar(x, hi_vals,  BAR_W, bottom=low_vals + med_vals, color=COLOR_HIGH,   label="High risk   (P > 0.50)",   zorder=3, alpha=0.95)
 
+    # Log scale: makes small archetypes readable alongside Price
+    ax.set_yscale("log")
+    ax.set_ylim(bottom=0.05)
+    ax.yaxis.set_major_formatter(
+        ticker.FuncFormatter(lambda v, _: f"{v:.0f}K" if v >= 1 else f"{v*1000:.0f}")
+    )
+
+    # Total label just above each bar
     for i, (tot, arch) in enumerate(zip(totals_k, ARCH_ORDER_BAR)):
         raw = summary[arch]["total"]
-        ax.text(x[i], tot + 0.3, f"{raw:,}", ha="center", va="bottom",
+        ax.text(x[i], tot * 1.15, f"{raw:,}", ha="center", va="bottom",
                 fontsize=8.5, color=TEXT, fontweight="600")
 
-    # Right-side callout labels pointing into the medium+high tier
-    # Shows count + % of that archetype actually at risk
-    x_label = len(ARCH_ORDER_BAR) - 0.1          # just past the last bar
-    ax.set_xlim(right=len(ARCH_ORDER_BAR) + 1.6)  # make room for labels
-
-    # Stagger text y-positions to avoid overlap; arrow points to mid of med+hi band
-    callout_positions = {
-        "price":       totals_k[ARCH_ORDER_BAR.index("price")] - 0.5,
-        "life_change": totals_k[ARCH_ORDER_BAR.index("life_change")] - 0.3,
-        "involuntary": 4.5,
-        "efficacy":    3.0,
-        "fatigue":     1.5,
-    }
-
-    for arch in ARCH_ORDER_BAR:
-        i       = ARCH_ORDER_BAR.index(arch)
-        med_hi  = summary[arch]["medium"] + summary[arch]["high"]
-        pct     = med_hi / summary[arch]["total"] * 100
-        mid_y   = (low_vals[i] + (med_vals[i] + hi_vals[i]) / 2)  # midpoint of risk band
-        text_y  = callout_positions[arch]
-        color   = ARCH_COLORS[arch]
-
-        ax.annotate(
-            f"{med_hi:,} at risk  ({pct:.0f}%)",
-            xy=(x[i] + BAR_W / 2, mid_y),
-            xytext=(x_label + 0.55, text_y),
-            fontsize=8, color=color, fontweight="600", va="center",
-            arrowprops=dict(arrowstyle="-", color=color, lw=0.9,
-                            connectionstyle="arc3,rad=0.0"),
-        )
+    # Short callout: "X at risk" just above the medium+high band, close to the bar
+    for i, arch in enumerate(ARCH_ORDER_BAR):
+        med_hi = summary[arch]["medium"] + summary[arch]["high"]
+        top_k  = totals_k[i]
+        if med_hi > 0:
+            ax.text(x[i] + BAR_W / 2 + 0.05, top_k * 1.0,
+                    f"  {med_hi:,} at risk",
+                    ha="left", va="center", fontsize=7.5, color=TEXT_MUTED)
 
     ax.set_xticks(x)
     ax.set_xticklabels([ARCH_LABELS[a] for a in ARCH_ORDER_BAR], color=TEXT, fontsize=9)
     ax.set_ylabel(C1_YLABEL, color=TEXT_MUTED, fontsize=9, labelpad=8)
-    ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{v:.0f}"))
 
-    ax.legend(fontsize=8, frameon=False, labelcolor=TEXT, loc="upper left")
+    # Legend below the chart, clear of the bars
+    ax.legend(fontsize=8, frameon=False, labelcolor=TEXT,
+              loc="lower center", bbox_to_anchor=(0.5, -0.22), ncol=3)
 
     ax.set_title(C1_TITLE,    color=TEXT,       fontsize=13, fontweight="bold", pad=14, loc="left")
     ax.set_xlabel(C1_SUBTITLE, color=TEXT_MUTED, fontsize=8.5, labelpad=10)
