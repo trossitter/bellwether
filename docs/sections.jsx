@@ -13,12 +13,12 @@ function Cover({ fleet }) {
       <div className="cover-head">
         <Reveal className="cover-mark">
           <DotMark size={22} color="var(--accent)" />
-          <span className="cm-name">Retention intelligence · built for Thesis</span>
+          <span className="cm-name">Proactive retention · built for Thesis</span>
         </Reveal>
         <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
         <Reveal as="p" className="cover-line" delay={2}>
-          They chose Thesis because they own their mind.{" "}
-          <b>Know the moment that mind starts to drift</b> — and what to do about it.
+          Thesis built a product for minds that want control.<br />
+          <b>Bellwether keeps them.</b>
         </Reveal>
       </div>
       <div className="cover-photo">
@@ -54,7 +54,7 @@ function FindingSection({ fleet, archetypes }) {
         <Reveal as="figure" className="finding-fig" delay={2}>
           <img src="chart_4_urgency.png" alt="Urgency rate by churn archetype"
             style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"left center"}} />
-          <figcaption>Scored nightly · five behavioral archetypes</figcaption>
+          <figcaption>76% of Payment Declined subscribers are at imminent risk · most addressable without a discount</figcaption>
         </Reveal>
       </div>
 
@@ -121,7 +121,7 @@ function MethodSection() {
           <Reveal className="frame-head" delay={1}>
             <span className="eyebrow">02 · The method</span>
             <h2 className="frame-title">A decision system, not a dashboard.</h2>
-            <p className="frame-sub">For each at-risk subscriber, Bellwether answers four questions — and closes the loop on whether the answer worked.</p>
+            <p className="frame-sub">Thesis built 7.3 million data points of subscriber intelligence. Bellwether reads it forward — identifying who's about to leave, why, and what to say before they reach the cancel button.</p>
           </Reveal>
         </div>
         <Reveal delay={1}>
@@ -168,8 +168,8 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
     <section id="review" className="section section--wide" data-screen-label="Review queue">
       <Reveal className="dec-head">
         <span className="eyebrow">03 · The review queue</span>
-        <h2 className="frame-title">Five subscribers, four answers each.</h2>
-        <p className="frame-sub">Of {fmt(fleet.atRisk)} at-risk, {fleet.reviewQueue} are escalated for human review this cycle. Here are the top five — pick one.</p>
+        <h2 className="frame-title">The review queue.</h2>
+        <p className="frame-sub">Of {fmt(fleet.atRisk)} flagged, {fleet.reviewQueue} are escalated this cycle. Each one comes with a churn reason, weighted signal factors, a recommended action, and a holdout experiment ready to run. Pick one.</p>
       </Reveal>
 
       <div className="deckmain">
@@ -327,7 +327,7 @@ function MessagesSection({ subscribers, tierOf }) {
         <Reveal className="msg-head">
           <span className="eyebrow">04 · What it produces</span>
           <h2 className="frame-title">The Bellwether notes</h2>
-          <p className="frame-sub">Each message is drafted from behavioral signals — then scored by an LLM judge before a human ever sees it. No templates. Personalized to the subscriber.</p>
+          <p className="frame-sub">Each message is drafted by Claude from behavioral signals — tenure, formula, billing timing, order cadence — then scored by a separate judge before a human ever sees it. Two brand voice hypotheses were calibrated against human ratings; warm voice selected at Spearman r = 0.779. No templates. No blanket discounts.</p>
         </Reveal>
         <div className="msg-grid">
           {subscribers.map((s, i) => {
@@ -369,7 +369,7 @@ function CloseSection({ fleet }) {
         <em>Who</em><span className="arrow">→</span><em>Why</em><span className="arrow">→</span><em>What</em><span className="arrow">→</span><em>Learn</em><span className="arrow">↻</span>
       </Reveal>
       <Reveal as="p" className="close-sub" delay={2}>
-        Right now, dispatch is simulated — no live sends. The only gap between this and Klaviyo is swapping one adapter class. When outcomes land — did they churn after the message? — they feed the next training run. The system gets sharper every cycle.
+        Right now, dispatch is simulated — no live sends, no real subscriber touched. The only gap between this and Klaviyo or Zendesk is swapping one adapter class. When outcomes land, they join on subscriber ID and feed the next model cycle. Each run, the thresholds sharpen, the archetypes tighten, and the interventions get closer to what actually keeps a Thesis subscriber.
       </Reveal>
       <Reveal as="div" className="close-meta" delay={3}>
         <DotMark size={14} color="var(--ink-3)" />
