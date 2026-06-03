@@ -302,12 +302,67 @@ def chart_3():
     print(f"Saved: {C3_OUT}")
 
 # ─────────────────────────────────────────────────────────────────────────────
+# CHART 4 — Urgency rate: % at risk within each archetype (lollipop)
+# ─────────────────────────────────────────────────────────────────────────────
+
+C4_TITLE    = "Where Intervention Is Most Urgent"
+C4_SUBTITLE = "Share of subscribers in each churn-reason group flagged as medium-to-high risk"
+C4_OUT      = Path(__file__).parent / "chart_4_urgency.png"
+C4_FIG_SIZE = (9, 5)
+
+def chart_4():
+    # Sort archetypes by urgency rate descending
+    archs = sorted(
+        ARCH_ORDER_BAR,
+        key=lambda a: (summary[a]["medium"] + summary[a]["high"]) / summary[a]["total"],
+        reverse=True,
+    )
+
+    pct_vals   = [(summary[a]["medium"] + summary[a]["high"]) / summary[a]["total"] * 100
+                  for a in archs]
+    count_vals = [summary[a]["medium"] + summary[a]["high"] for a in archs]
+    total_vals = [summary[a]["total"] for a in archs]
+    colors     = [ARCH_COLORS[a] for a in archs]
+
+    fig, ax = plt.subplots(figsize=C4_FIG_SIZE, facecolor=BG)
+    _apply_light_theme(ax)
+    ax.xaxis.grid(True, color=GRID, lw=0.8, zorder=0)
+    ax.set_axisbelow(True)
+
+    y = np.arange(len(archs))
+
+    for i, (pct, count, total, color) in enumerate(zip(pct_vals, count_vals, total_vals, colors)):
+        # Stem line from 0 to dot
+        ax.plot([0, pct], [y[i], y[i]], color=color, lw=2.0, zorder=3)
+        # Dot at the percentage
+        ax.plot(pct, y[i], "o", color=color, markersize=10, zorder=4)
+        # Label: percentage bold, then raw count in muted text
+        ax.text(pct + 1.2, y[i] + 0.18, f"{pct:.0f}%",
+                ha="left", va="center", fontsize=11, color=color, fontweight="700")
+        ax.text(pct + 1.2, y[i] - 0.22, f"{count:,} of {total:,} subscribers",
+                ha="left", va="center", fontsize=8, color=TEXT_MUTED)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels([ARCH_LABELS[a] for a in archs], color=TEXT, fontsize=10)
+    ax.set_xlim(0, 108)  # breathing room for "503 of 666 subscribers" label
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{v:.0f}%"))
+    ax.tick_params(axis="x", colors=TEXT_MUTED, labelsize=9)
+    ax.set_xlabel(C4_SUBTITLE, color=TEXT_MUTED, fontsize=8.5, labelpad=10)
+    ax.set_title(C4_TITLE, color=TEXT, fontsize=13, fontweight="bold", pad=14, loc="left")
+
+    plt.tight_layout()
+    fig.savefig(C4_OUT, dpi=DPI, bbox_inches="tight", facecolor=BG)
+    print(f"Saved: {C4_OUT}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # RUN
 # ─────────────────────────────────────────────────────────────────────────────
 
 chart_1()
 chart_2()
 chart_3()
+chart_4()
 
 if OPEN_AFTER:
     import subprocess
