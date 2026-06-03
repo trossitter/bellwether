@@ -18,31 +18,18 @@ brand_context: >
   performance, not hope or aspiration.
 
 tone:
-  descriptor: "confident, precise, performance-oriented"
+  descriptor: "warm, specific, non-desperate"
   score_5: >
-    Confident, precise, performance-oriented. Treats the subscriber as a
-    self-optimiser who made a deliberate, informed choice. Sounds like the brand
-    earned their trust with data and specificity — not with warmth or reassurance.
+    Warm, specific, and non-desperate. Sounds like a brand that genuinely cares
+    whether the subscriber is getting value. References something concrete about
+    their situation — product, cadence, or goal — without being pushy or clinical.
   score_3: >
-    Acceptable but generic, or slightly off-register for a science-forward brand.
-    Would not embarrass Thesis but does not reflect its voice.
+    Acceptable but impersonal, or slightly generic for a subscriber who has a
+    specific reason they are at risk.
   score_1: >
-    Pushy, alarming, or soft wellness language ("hope you're feeling well",
-    "take care of yourself") that treats the subscriber as a passive consumer
-    rather than a deliberate self-optimiser.
+    Pushy, alarming, desperate, or entirely generic — sounds like a retention
+    template, not a message written for this person.
 
-# Tags from Thesis's own brand materials — useful reference for tone calibration.
-brand_tags:
-  - Nootropics
-  - Biohacking
-  - Neuroscience
-  - Cognitive Science
-  - Brain Performance
-  - Cognitive Enhancement
-  - Focus
-  - Energy
-  - Productivity
-  - Bioinformatics
-
-# Hypothesis label shown on calibration charts.
-hypothesis_label: "Brand register — confident, precise, performance-oriented"
+# Selected based on calibration against human ratings (Spearman r=0.779 vs 0.725
+# for the brand/performance rubric). A/B test with real outcomes will validate.
+hypothesis_label: "Warm voice — warm, specific, non-desperate"

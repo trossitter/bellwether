@@ -43,7 +43,7 @@ ARCH_COLORS = {
 }
 ARCH_LABELS = {
     "price":       "Price",
-    "efficacy":    "Efficacy",
+    "efficacy":    "Early Efficacy Signal",
     "fatigue":     "Product Overstock",
     "life_change": "Life Change",
     "involuntary": "Payment Declined",
