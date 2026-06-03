@@ -29,7 +29,7 @@ An end-to-end pipeline, not a dashboard:
 
 TakeThesis runs its revenue on subscriptions, and the default retention motion is reactive: win a subscriber back *after* they cancel, once intent has hardened and the offer has to be expensive. The leverage is upstream — read the leading indicators and act while the subscriber is still active.
 
-The partner sells across two subscription lines — **Thesis**, its nootropic cognitive-performance supplements, and **Stasis**, which includes a children's line (Stasis Kids). We built on Thesis subscribers only. Stasis is a different problem, not a missing slice of the same one — parent-driven purchases, a distinct stimulant-sensitivity profile, and different household economics all change reasons for churn, and I made the decision that pooling the two would suppress signal in both. It earns its own model on this architecture.
+The partner sells across two subscription lines — **Thesis**, its nootropic cognitive-performance supplements, and **Stasis**, which includes a children's line (Stasis Kids). We built on Thesis subscribers only. Stasis is a different problem, not a missing slice of the same one — parent-driven purchases, a distinct stimulant-sensitivity profile, and different household economics all change reasons for churn, and I made the decision that pooling the two would suppress signal in both. It earns its own model on this architecture. — [ADR-0001](docs/adr/0001-scope-to-the-thesis-subscription-line.md)
 
 ### Population funnel
 
