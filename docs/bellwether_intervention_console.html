@@ -1,0 +1,1159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bellwether Intervention Console</title>
+  <style>
+    :root {
+      --ink: #171615;
+      --muted: #6d6861;
+      --line: #e2ddd8;
+      --paper: #f7f3f1;
+      --panel: #fffdfb;
+      --field: #f0eae7;
+      --thesis: #2e6fdd;
+      --stasis: #1c8a68;
+      --amber: #de8b25;
+      --rose: #d4515b;
+      --violet: #7557c8;
+      --green: #2f8f66;
+      --blush: #eadedc;
+      --shadow: 0 18px 45px rgba(47, 39, 35, 0.11);
+      --mono: "SFMono-Regular", "Roboto Mono", "Cascadia Mono", Menlo, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(247, 243, 241, 0.94) 520px),
+        var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.35;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 272px minmax(420px, 1fr) 420px;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 243, 241, 0.92);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(14px);
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .wordmark {
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .select {
+      height: 36px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 0 32px 0 12px;
+      min-width: 132px;
+    }
+
+    .button {
+      height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .button.primary {
+      background: var(--ink);
+      color: var(--panel);
+      border-color: var(--ink);
+    }
+
+    .button:focus-visible,
+    .queue-row:focus-visible {
+      outline: 3px solid rgba(46, 111, 221, 0.35);
+      outline-offset: 2px;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      padding: 18px 16px 22px;
+      background: rgba(240, 234, 231, 0.72);
+      overflow: auto;
+    }
+
+    .main {
+      padding: 22px 24px 28px;
+      overflow: auto;
+    }
+
+    .right {
+      border-left: 1px solid var(--line);
+      padding: 22px 20px 28px;
+      background: rgba(240, 234, 231, 0.72);
+      overflow: auto;
+    }
+
+    .label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .sidebar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .count {
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .risk-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .queue-row {
+      width: 100%;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .queue-row:hover {
+      background: rgba(255, 253, 248, 0.62);
+    }
+
+    .queue-row.active {
+      border-color: var(--ink);
+      background: var(--panel);
+      box-shadow: 0 8px 22px rgba(37, 31, 22, 0.08);
+    }
+
+    .row-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .subscriber {
+      font-weight: 800;
+      font-size: 14px;
+      min-width: 0;
+    }
+
+    .risk {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--rose);
+      white-space: nowrap;
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(255, 253, 248, 0.7);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.price { border-color: rgba(212, 81, 91, 0.4); color: #a33842; }
+    .pill.fatigue { border-color: rgba(222, 139, 37, 0.45); color: #9b5d12; }
+    .pill.efficacy { border-color: rgba(46, 111, 221, 0.38); color: #1d58b3; }
+    .pill.stimulant { border-color: rgba(117, 87, 200, 0.38); color: #573ba9; }
+    .pill.involuntary { border-color: rgba(47, 143, 102, 0.38); color: #247050; }
+
+    .meter {
+      height: 5px;
+      background: #e4dfd5;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--amber), var(--rose));
+      border-radius: inherit;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 274px;
+      gap: 16px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero-copy,
+    .scorecard,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 22px;
+      min-width: 0;
+      min-height: 360px;
+      display: grid;
+      align-content: space-between;
+      background:
+        linear-gradient(90deg, rgba(255, 253, 251, 0.96) 0%, rgba(255, 253, 251, 0.82) 48%, rgba(255, 253, 251, 0.17) 78%),
+        url("./bellwether_product_still_life.png") center right / cover no-repeat;
+      overflow: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(31px, 4vw, 56px);
+      line-height: 0.96;
+      letter-spacing: 0;
+      max-width: 900px;
+    }
+
+    .lede {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 620px;
+    }
+
+    .hero-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .hero-tab {
+      border: 1px solid rgba(226, 221, 216, 0.92);
+      background: rgba(255, 253, 251, 0.72);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      backdrop-filter: blur(8px);
+    }
+
+    .scorecard {
+      padding: 18px;
+      display: grid;
+      align-content: space-between;
+      gap: 16px;
+      min-height: 360px;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 251, 0.98), rgba(245, 239, 236, 0.94)),
+        var(--panel);
+    }
+
+    .scorecard .big {
+      font-family: var(--mono);
+      font-size: 54px;
+      line-height: 0.94;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .scorecard .caption {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .stat-value {
+      display: block;
+      font-family: var(--mono);
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0;
+      margin-top: 6px;
+    }
+
+    .stat-copy {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.88fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      overflow: hidden;
+      box-shadow: none;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fbf8f6;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .evidence-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .evidence {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #e9e4da;
+    }
+
+    .evidence:last-child {
+      border-bottom: 0;
+    }
+
+    .index {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--field);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .evidence strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .evidence span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .impact {
+      font-family: var(--mono);
+      color: var(--rose);
+      font-weight: 850;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .message-box {
+      display: grid;
+      gap: 14px;
+    }
+
+    .message {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffaf6;
+      padding: 16px;
+      font-size: 16px;
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .judge {
+      display: grid;
+      grid-template-columns: 84px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .ring {
+      width: 76px;
+      height: 76px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--green) var(--score), #e6e0d5 0);
+      position: relative;
+    }
+
+    .ring::after {
+      content: "";
+      position: absolute;
+      width: 56px;
+      height: 56px;
+      background: var(--panel);
+      border-radius: inherit;
+    }
+
+    .ring b {
+      position: relative;
+      z-index: 1;
+      font-family: var(--mono);
+      font-size: 18px;
+    }
+
+    .judge p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .system-flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #e1dbcf;
+    }
+
+    .flow-step:last-child {
+      border-bottom: 0;
+    }
+
+    .flow-name {
+      font-weight: 850;
+    }
+
+    .flow-desc {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .status {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--green);
+      font-weight: 850;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 14px minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: var(--thesis);
+      margin-top: 5px;
+    }
+
+    .timeline-item strong {
+      font-size: 13px;
+      display: block;
+    }
+
+    .timeline-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 106px minmax(0, 1fr) 44px;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .bar-track {
+      height: 8px;
+      background: #e4dfd5;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: var(--thesis);
+    }
+
+    .right .panel + .panel {
+      margin-top: 14px;
+    }
+
+    body.stasis-mode {
+      --thesis: var(--stasis);
+    }
+
+    body.stasis-mode .wordmark::after {
+      content: " / Stasis";
+      color: var(--stasis);
+    }
+
+    @media (max-width: 1180px) {
+      .app {
+        grid-template-columns: 248px minmax(0, 1fr);
+      }
+
+      .right {
+        grid-column: 1 / -1;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .right .panel + .panel {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        display: block;
+      }
+
+      .topbar,
+      .brand-lockup {
+        align-items: flex-start;
+      }
+
+      .topbar {
+        position: static;
+        flex-direction: column;
+      }
+
+      .tagline {
+        white-space: normal;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .sidebar,
+      .main,
+      .right {
+        border: 0;
+      }
+
+      .hero,
+      .detail-grid,
+      .stats,
+      .right {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        max-height: none;
+      }
+
+      .risk-stack {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .main,
+      .right,
+      .sidebar {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .hero-copy,
+      .scorecard,
+      .panel-body,
+      .panel-head {
+        padding: 14px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .action-row,
+      .evidence,
+      .flow-step,
+      .bar-row {
+        grid-template-columns: 1fr;
+      }
+
+      .impact {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="wordmark">Bellwether</div>
+        <div class="tagline" id="brandTagline">Thesis retention intelligence for subscribers before they cancel</div>
+      </div>
+      <div class="top-actions">
+        <select class="select" id="brandSelect" aria-label="Brand">
+          <option value="thesis">Thesis</option>
+          <option value="stasis">Stasis</option>
+        </select>
+        <button class="button" type="button" id="refreshBtn">Refresh queue</button>
+        <button class="button primary" type="button" id="dispatchBtn">Approve action</button>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <div>
+          <div class="label">At-risk queue</div>
+          <div class="count">30-60 day horizon</div>
+        </div>
+        <div class="count">5 shown</div>
+      </div>
+      <div class="risk-stack" id="queue"></div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div class="hero-copy">
+          <div>
+            <div class="label">Intervention console</div>
+            <h1>Find the subscriber, the reason, and the next best move.</h1>
+            <p class="lede" id="heroLede">Bellwether turns Snowflake history into a ranked operating queue: churn risk, archetype, evidence, draft message, judge score, and outcome logging.</p>
+          </div>
+          <div class="hero-tabs" aria-label="Bellwether system stages">
+            <span class="hero-tab">Score</span>
+            <span class="hero-tab">Classify</span>
+            <span class="hero-tab">Intervene</span>
+            <span class="hero-tab">Learn</span>
+          </div>
+        </div>
+        <div class="scorecard">
+          <div>
+            <div class="label">Current decision</div>
+            <div class="big" id="currentRisk">82%</div>
+          </div>
+          <p class="caption" id="currentSummary">Price-sensitive subscriber with renewal in 3 days.</p>
+        </div>
+      </section>
+
+      <section class="stats" aria-label="Pipeline summary">
+        <div class="stat">
+          <div class="label">Scored today</div>
+          <span class="stat-value">449K</span>
+          <div class="stat-copy">Thesis subscriptions</div>
+        </div>
+        <div class="stat">
+          <div class="label">Above threshold</div>
+          <span class="stat-value">1,842</span>
+          <div class="stat-copy">Ready for routing</div>
+        </div>
+        <div class="stat">
+          <div class="label">Judge pass rate</div>
+          <span class="stat-value">91%</span>
+          <div class="stat-copy">Brand-safe drafts</div>
+        </div>
+        <div class="stat">
+          <div class="label">Learning loop</div>
+          <span class="stat-value">24h</span>
+          <div class="stat-copy">Outcome refresh</div>
+        </div>
+      </section>
+
+      <section class="detail-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="label">Why this subscriber surfaced</div>
+              <h2 class="panel-title" id="subscriberTitle">SUB-4821 · Price</h2>
+            </div>
+            <span class="pill price" id="archetypePill">price</span>
+          </div>
+          <div class="panel-body">
+            <div class="evidence-list" id="evidenceList"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="label">Recommended action</div>
+              <h2 class="panel-title" id="actionTitle">Offer a targeted save</h2>
+            </div>
+            <span class="status" id="guardrailStatus">PASS</span>
+          </div>
+          <div class="panel-body message-box">
+            <p class="message" id="draftMessage"></p>
+            <div class="judge">
+              <div class="ring" id="judgeRing" style="--score: 88%">
+                <b id="judgeScore">4.4</b>
+              </div>
+              <div>
+                <strong>Claude judge score</strong>
+                <p id="judgeCopy">Archetype, tone, specificity, and urgency all clear the dispatch threshold.</p>
+              </div>
+            </div>
+            <div class="action-row">
+              <button class="button primary" type="button">Approve</button>
+              <button class="button" type="button">Send to review</button>
+              <button class="button wide" type="button">Log as holdout</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="label">System path</div>
+            <h3 class="panel-title">Score to learn</h3>
+          </div>
+        </div>
+        <div class="panel-body system-flow">
+          <div class="flow-step">
+            <div class="status">01</div>
+            <div>
+              <div class="flow-name">Score</div>
+              <div class="flow-desc">Point-in-time Snowflake features feed churn probability.</div>
+            </div>
+            <div class="status">DONE</div>
+          </div>
+          <div class="flow-step">
+            <div class="status">02</div>
+            <div>
+              <div class="flow-name">Classify</div>
+              <div class="flow-desc">Deterministic routing maps risk to intervention archetype.</div>
+            </div>
+            <div class="status">DONE</div>
+          </div>
+          <div class="flow-step">
+            <div class="status">03</div>
+            <div>
+              <div class="flow-name">Intervene</div>
+              <div class="flow-desc">Claude selects an allowed action and drafts a message.</div>
+            </div>
+            <div class="status">LIVE</div>
+          </div>
+          <div class="flow-step">
+            <div class="status">04</div>
+            <div>
+              <div class="flow-name">Learn</div>
+              <div class="flow-desc">Outcome, judge score, and dispatch decision return to the warehouse.</div>
+            </div>
+            <div class="status">READY</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="label">Archetype mix</div>
+            <h3 class="panel-title">Today’s queue</h3>
+          </div>
+        </div>
+        <div class="panel-body bar-list">
+          <div class="bar-row"><span>Price</span><div class="bar-track"><div class="bar-fill" style="width: 34%"></div></div><strong>34%</strong></div>
+          <div class="bar-row"><span>Fatigue</span><div class="bar-track"><div class="bar-fill" style="width: 24%; background: var(--amber)"></div></div><strong>24%</strong></div>
+          <div class="bar-row"><span>Efficacy</span><div class="bar-track"><div class="bar-fill" style="width: 18%; background: var(--violet)"></div></div><strong>18%</strong></div>
+          <div class="bar-row"><span>Stimulant</span><div class="bar-track"><div class="bar-fill" style="width: 14%; background: var(--green)"></div></div><strong>14%</strong></div>
+          <div class="bar-row"><span>Involuntary</span><div class="bar-track"><div class="bar-fill" style="width: 10%; background: var(--rose)"></div></div><strong>10%</strong></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="label">Subscriber context</div>
+            <h3 class="panel-title">Signal timeline</h3>
+          </div>
+        </div>
+        <div class="panel-body timeline" id="timeline"></div>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    const subscribers = [
+      {
+        id: "SUB-4821",
+        brand: "Thesis",
+        archetype: "price",
+        risk: 0.82,
+        summary: "Price-sensitive subscriber with renewal in 3 days.",
+        action: "Offer a targeted save",
+        message: "We know Thesis is a real commitment. Your next box is coming up, so we added 15% off this cycle while you keep testing what works best for your brain.",
+        judge: 4.4,
+        judgeCopy: "The message acknowledges cost, protects the relationship, and stays specific to the renewal moment.",
+        evidence: [
+          ["Subscription price", "$79 monthly plan is the strongest churn driver", "+0.19"],
+          ["Discount history", "Subscriber has responded to prior offer frames", "+0.12"],
+          ["Next charge", "Renewal scheduled in 3 days", "+0.10"],
+          ["Klaviyo", "No email opens in the last 38 days", "+0.07"]
+        ],
+        timeline: [
+          ["Today", "Queued for price intervention"],
+          ["3 days", "Next charge scheduled"],
+          ["38 days", "Last email open"],
+          ["143 days", "Subscription tenure"]
+        ]
+      },
+      {
+        id: "SUB-7314",
+        brand: "Thesis",
+        archetype: "fatigue",
+        risk: 0.76,
+        summary: "High order volume suggests product is piling up.",
+        action: "Stretch the cadence",
+        message: "Looks like your supply may be ahead of your routine. We can move your Thesis box from every 4 weeks to every 6 so your stack catches up with your actual usage.",
+        judge: 4.7,
+        judgeCopy: "Specific cadence change, low pressure, and directly matched to the fatigue signal.",
+        evidence: [
+          ["Order cadence", "5 subscription orders in 57 days", "+0.18"],
+          ["Days since order", "Shipment arrived 8 days ago", "+0.11"],
+          ["Quantity", "Two formulas active on the subscription", "+0.08"],
+          ["Next charge", "Another charge scheduled within 5 days", "+0.08"]
+        ],
+        timeline: [
+          ["Today", "Queued for cadence adjustment"],
+          ["5 days", "Next charge scheduled"],
+          ["8 days", "Last order delivered"],
+          ["57 days", "Five orders observed"]
+        ]
+      },
+      {
+        id: "SUB-1198",
+        brand: "Thesis",
+        archetype: "efficacy",
+        risk: 0.69,
+        summary: "Early-tenure subscriber may not be feeling results yet.",
+        action: "Offer an advisor consult",
+        message: "You are still early in the testing window. If Clarity has not felt quite right yet, an advisor can help adjust timing or swap formulas before you give up on the system.",
+        judge: 4.1,
+        judgeCopy: "Clear fit for efficacy concern; slightly more product specificity would lift the score.",
+        evidence: [
+          ["Tenure", "38 days since subscription start", "+0.14"],
+          ["Support", "Ticket mentions not noticing expected effect", "+0.13"],
+          ["Formula", "Clarity is active, no second formula selected", "+0.09"],
+          ["Quiz", "Goal listed as deep focus for analytical work", "+0.06"]
+        ],
+        timeline: [
+          ["Today", "Queued for advisor consult"],
+          ["6 days", "Support ticket opened"],
+          ["38 days", "Testing window started"],
+          ["45 days", "Recommended reassessment point"]
+        ]
+      },
+      {
+        id: "SUB-6042",
+        brand: "Thesis",
+        archetype: "stimulant",
+        risk: 0.72,
+        summary: "Motivation formula plus side-effect signal.",
+        action: "Recommend a caffeine-free swap",
+        message: "Motivation can feel too activating for some members. We can swap your next box to a caffeine-free Clarity option so you keep the cognitive support without pushing stimulation higher.",
+        judge: 4.5,
+        judgeCopy: "Specific to formula and concern, with a practical action instead of a hard retention push.",
+        evidence: [
+          ["Formula", "Motivation is active on the subscription", "+0.16"],
+          ["Support", "Ticket includes stimulant sensitivity language", "+0.14"],
+          ["Adverse event", "Side-effect flag present before observation date", "+0.12"],
+          ["Engagement", "Clicked support article about caffeine timing", "+0.05"]
+        ],
+        timeline: [
+          ["Today", "Queued for formula swap"],
+          ["2 days", "Support article click"],
+          ["9 days", "Sensitivity ticket logged"],
+          ["84 days", "Subscription tenure"]
+        ]
+      },
+      {
+        id: "SUB-9207",
+        brand: "Thesis",
+        archetype: "involuntary",
+        risk: 0.88,
+        summary: "Billing friction is likely to create avoidable churn.",
+        action: "Retry payment path",
+        message: "Your most recent payment did not go through. You can update the card in under a minute and we will keep your Thesis subscription active while the retry runs.",
+        judge: 4.2,
+        judgeCopy: "High urgency is appropriate, and the copy avoids blame while making the next step obvious.",
+        evidence: [
+          ["Payment", "Charge attempt failed before observation date", "+0.22"],
+          ["Tenure", "Long-tenured subscriber with stable order history", "-0.05"],
+          ["Order count", "11 successful subscription orders", "-0.04"],
+          ["Next charge", "Retry window is active", "+0.15"]
+        ],
+        timeline: [
+          ["Today", "Queued for payment recovery"],
+          ["1 day", "Retry window active"],
+          ["2 days", "Last charge failed"],
+          ["316 days", "Subscription tenure"]
+        ]
+      }
+    ];
+
+    const brandCopy = {
+      thesis: {
+        tagline: "Thesis retention intelligence for subscribers before they cancel",
+        lede: "Bellwether turns Snowflake history into a ranked operating queue: churn risk, archetype, evidence, draft message, judge score, and outcome logging."
+      },
+      stasis: {
+        tagline: "Stasis retention intelligence for stimulant-support subscribers",
+        lede: "The same architecture can run a different brand register: grounded, sensitivity-aware, and tuned for stimulant support instead of cognitive optimization."
+      }
+    };
+
+    let activeIndex = 0;
+
+    const queue = document.querySelector("#queue");
+    const subscriberTitle = document.querySelector("#subscriberTitle");
+    const archetypePill = document.querySelector("#archetypePill");
+    const evidenceList = document.querySelector("#evidenceList");
+    const timeline = document.querySelector("#timeline");
+    const currentRisk = document.querySelector("#currentRisk");
+    const currentSummary = document.querySelector("#currentSummary");
+    const actionTitle = document.querySelector("#actionTitle");
+    const draftMessage = document.querySelector("#draftMessage");
+    const judgeRing = document.querySelector("#judgeRing");
+    const judgeScore = document.querySelector("#judgeScore");
+    const judgeCopy = document.querySelector("#judgeCopy");
+    const brandSelect = document.querySelector("#brandSelect");
+    const heroLede = document.querySelector("#heroLede");
+    const brandTagline = document.querySelector("#brandTagline");
+    const refreshBtn = document.querySelector("#refreshBtn");
+    const dispatchBtn = document.querySelector("#dispatchBtn");
+
+    function archetypeLabel(value) {
+      return value.replace("_", " ");
+    }
+
+    function renderQueue() {
+      queue.innerHTML = subscribers.map((subscriber, index) => `
+        <button class="queue-row ${index === activeIndex ? "active" : ""}" type="button" data-index="${index}">
+          <div class="row-top">
+            <div class="subscriber">${subscriber.id}</div>
+            <div class="risk">${Math.round(subscriber.risk * 100)}%</div>
+          </div>
+          <div class="mini">
+            <span class="pill ${subscriber.archetype}">${archetypeLabel(subscriber.archetype)}</span>
+            <span>${subscriber.summary}</span>
+          </div>
+          <div class="meter"><span style="width: ${subscriber.risk * 100}%"></span></div>
+        </button>
+      `).join("");
+    }
+
+    function renderSubscriber() {
+      const subscriber = subscribers[activeIndex];
+      subscriberTitle.textContent = `${subscriber.id} · ${archetypeLabel(subscriber.archetype)}`;
+      archetypePill.className = `pill ${subscriber.archetype}`;
+      archetypePill.textContent = archetypeLabel(subscriber.archetype);
+      currentRisk.textContent = `${Math.round(subscriber.risk * 100)}%`;
+      currentSummary.textContent = subscriber.summary;
+      actionTitle.textContent = subscriber.action;
+      draftMessage.textContent = subscriber.message;
+      judgeScore.textContent = subscriber.judge.toFixed(1);
+      judgeCopy.textContent = subscriber.judgeCopy;
+      judgeRing.style.setProperty("--score", `${subscriber.judge / 5 * 100}%`);
+
+      evidenceList.innerHTML = subscriber.evidence.map((item, index) => `
+        <div class="evidence">
+          <div class="index">${index + 1}</div>
+          <div>
+            <strong>${item[0]}</strong>
+            <span>${item[1]}</span>
+          </div>
+          <div class="impact">${item[2]}</div>
+        </div>
+      `).join("");
+
+      timeline.innerHTML = subscriber.timeline.map((item) => `
+        <div class="timeline-item">
+          <div class="dot"></div>
+          <div>
+            <strong>${item[0]}</strong>
+            <span>${item[1]}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    queue.addEventListener("click", (event) => {
+      const row = event.target.closest(".queue-row");
+      if (!row) return;
+      activeIndex = Number(row.dataset.index);
+      renderQueue();
+      renderSubscriber();
+    });
+
+    brandSelect.addEventListener("change", () => {
+      const mode = brandSelect.value;
+      document.body.classList.toggle("stasis-mode", mode === "stasis");
+      brandTagline.textContent = brandCopy[mode].tagline;
+      heroLede.textContent = brandCopy[mode].lede;
+    });
+
+    refreshBtn.addEventListener("click", () => {
+      activeIndex = (activeIndex + 1) % subscribers.length;
+      renderQueue();
+      renderSubscriber();
+    });
+
+    dispatchBtn.addEventListener("click", () => {
+      dispatchBtn.textContent = "Action approved";
+      window.setTimeout(() => {
+        dispatchBtn.textContent = "Approve action";
+      }, 1400);
+    });
+
+    renderQueue();
+    renderSubscriber();
+  </script>
+</body>
+</html>
