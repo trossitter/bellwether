@@ -10,7 +10,7 @@ import subprocess
 import textwrap
 from datetime import datetime, timezone
 
-from bellwether.db.snowflake import output_table, read_sql
+from bellwether.db.snowflake import execute_sql, output_table, read_sql
 
 _TABLE = "EVAL_RUNS"
 
@@ -34,7 +34,7 @@ DDL = textwrap.dedent(f"""\
 
 def ensure_table() -> None:
     """Create BELLWETHER_EVAL_RUNS if it does not already exist."""
-    read_sql(DDL)
+    execute_sql(DDL)
 
 
 def _git_sha() -> str | None:
@@ -91,7 +91,7 @@ def record_metric(
         f"{_q(metric_name)}, {_q(metric_value)}, {_q(threshold)}, {_q(passed)}, "
         f"{_q(n_subscribers)}, {_q(model_version)}, {_q(git)}, {_q(notes)})"
     )
-    read_sql(sql)
+    execute_sql(sql)
 
 
 # Metrics where lower values are better (threshold is an upper bound).

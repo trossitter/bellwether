@@ -64,6 +64,16 @@ def read_sql(query: str) -> pd.DataFrame:
             cursor.close()
 
 
+def execute_sql(statement: str) -> None:
+    """Execute a statement that returns no rows (DDL, INSERT, MERGE)."""
+    with _connection() as conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute(statement)
+        finally:
+            cursor.close()
+
+
 def output_table(name: str) -> str:
     """Return the fully-qualified, namespaced ``OUTPUTS`` table name for ``name``."""
     bare = name if name.startswith(OUTPUT_PREFIX) else f"{OUTPUT_PREFIX}{name}"
