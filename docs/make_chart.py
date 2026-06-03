@@ -31,22 +31,27 @@ FIG_SIZE = (15, 7.2)
 PANEL_GAP = 0.40
 
 # Title & subtitle
-TITLE         = "Bellwether  ·  26,584 Active Thesis Subscribers Scored"
-TITLE_SIZE    = 14
+TITLE         = "2,247 Thesis Subscribers Are Signaling Risk — $59K at Stake This Month"
+TITLE_SIZE    = 13
 TITLE_Y       = 0.97       # 0 = bottom of figure, 1 = top
 
+SUBTITLE      = "Classified by likely churn reason  ·  $79/cycle assumed"
 SUBTITLE_SIZE = 9.5
 SUBTITLE_Y    = 0.935
 
 # Panel titles
-PANEL1_TITLE = "Subscribers by Archetype & Risk Tier"
-PANEL2_TITLE = "Revenue at Risk by Archetype"
+PANEL1_TITLE = "Subscribers at Risk by Churn Reason"
+PANEL2_TITLE = "Monthly Revenue at Risk by Churn Reason"
 PANEL_TITLE_SIZE = 11
 
 # Axis labels
-PANEL1_YLABEL = "Active Thesis subscribers"
-PANEL2_XLABEL = "Expected revenue at risk  ($79 x P(churn))"
-AXIS_LABEL_SIZE = 10
+PANEL1_YLABEL      = "Subscribers  (log scale)"
+PANEL1_LOG_SCALE   = True   # log scale handles Price (17K) vs Involuntary (666) gap
+PANEL2_XLABEL      = "Expected monthly revenue at risk  ($79 x P(churn))"
+AXIS_LABEL_SIZE    = 10
+
+# Legend position: "inside" (old, overlaps bars) or "below" (recommended)
+LEGEND_POSITION = "below"
 
 # Bar width (0–1; wider = bars touch)
 BAR_WIDTH = 0.55
@@ -123,18 +128,15 @@ else:
 summary = data["summary"]
 totals  = data["totals"]
 
-subtitle = (
-    f"Total revenue at risk: ${totals['revenue_at_risk']:,.0f}"
-    f"   |   {totals['at_risk_medium_high']:,} at medium-to-high risk"
-    f"   |   Monthly value at ${totals['sub_value_assumption']:.0f}/cycle"
-)
+subtitle = SUBTITLE
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CHART
 # ─────────────────────────────────────────────────────────────────────────────
 
 fig, axes = plt.subplots(1, 2, figsize=FIG_SIZE, facecolor=COLOR_BG)
-fig.subplots_adjust(wspace=PANEL_GAP, top=0.88, bottom=0.12)
+fig.subplots_adjust(wspace=PANEL_GAP, top=0.88,
+                    bottom=0.20 if LEGEND_POSITION == "below" else 0.12)
 
 x = np.arange(len(ARCH_ORDER))
 
@@ -155,19 +157,27 @@ ax.bar(x, low_vals,                         BAR_WIDTH, color=COLOR_LOW,    label
 ax.bar(x, med_vals, BAR_WIDTH, bottom=low_vals,                color=COLOR_MEDIUM, label="Medium risk  (0.10 to P < 0.50)", alpha=0.88)
 ax.bar(x, hi_vals,  BAR_WIDTH, bottom=low_vals + med_vals,     color=COLOR_HIGH,   label="High risk  (P >= 0.50)", alpha=0.92)
 
+if PANEL1_LOG_SCALE:
+    ax.set_yscale("log")
+    ax.set_ylim(bottom=1)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{int(v):,}"))
+
 for i, arch in enumerate(ARCH_ORDER):
     total = summary[arch]["total"]
     top   = low_vals[i] + med_vals[i] + hi_vals[i]
     if total > 0:
-        ax.text(x[i], top + 100, f"{total:,}", ha="center", va="bottom",
+        offset = top * 1.15 if PANEL1_LOG_SCALE else top + 100
+        ax.text(x[i], offset, f"{total:,}", ha="center", va="bottom",
                 fontsize=VALUE_LABEL_SIZE, color=COLOR_WHITE, fontweight="bold")
 
 ax.set_xticks(x)
 ax.set_xticklabels([ARCH_LABELS[a] for a in ARCH_ORDER], color=COLOR_MUTED, fontsize=TICK_LABEL_SIZE)
 ax.set_ylabel(PANEL1_YLABEL, color=COLOR_MUTED, fontsize=AXIS_LABEL_SIZE, labelpad=8)
 ax.set_title(PANEL1_TITLE, color=COLOR_WHITE, fontsize=PANEL_TITLE_SIZE, fontweight="bold", pad=10)
-ax.legend(fontsize=LEGEND_SIZE, framealpha=0.2, facecolor=COLOR_PANEL,
-          edgecolor=COLOR_GRID, labelcolor=COLOR_WHITE, loc="upper right")
+
+if LEGEND_POSITION == "inside":
+    ax.legend(fontsize=LEGEND_SIZE, framealpha=0.2, facecolor=COLOR_PANEL,
+              edgecolor=COLOR_GRID, labelcolor=COLOR_WHITE, loc="upper right")
 
 # ── Panel 2: horizontal revenue bars ──────────────────────────────────────
 ax2 = axes[1]
@@ -196,6 +206,20 @@ ax2.set_title(PANEL2_TITLE, color=COLOR_WHITE, fontsize=PANEL_TITLE_SIZE, fontwe
 # ── Banner ─────────────────────────────────────────────────────────────────
 fig.text(0.5, TITLE_Y,    TITLE,    ha="center", va="top", fontsize=TITLE_SIZE,    fontweight="bold", color=COLOR_WHITE)
 fig.text(0.5, SUBTITLE_Y, subtitle, ha="center", va="top", fontsize=SUBTITLE_SIZE, color=COLOR_MUTED)
+
+# ── Legend (below both panels if LEGEND_POSITION == "below") ───────────────
+if LEGEND_POSITION == "below":
+    legend_patches = [
+        mpatches.Patch(color=COLOR_LOW,    label="Low risk  (P < 0.10)"),
+        mpatches.Patch(color=COLOR_MEDIUM, label="Medium risk  (0.10 to P < 0.50)", alpha=0.88),
+        mpatches.Patch(color=COLOR_HIGH,   label="High risk  (P >= 0.50)", alpha=0.92),
+    ]
+    fig.legend(handles=legend_patches,
+               loc="lower center", ncol=3,
+               fontsize=LEGEND_SIZE, framealpha=0.15,
+               facecolor=COLOR_PANEL, edgecolor=COLOR_GRID,
+               labelcolor=COLOR_WHITE,
+               bbox_to_anchor=(0.5, 0.01))
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SAVE
