@@ -182,7 +182,7 @@ def chart_2():
 # ─────────────────────────────────────────────────────────────────────────────
 
 C3_TITLE    = "What's Driving Thesis Churn — and How It's Shifting"
-C3_SUBTITLE = "Share of cancellations with a known reason, by quarter  ·  Thesis subscribers only"
+C3_SUBTITLE = "Share of cancellations with a known reason, by quarter"
 C3_YLABEL   = "Share of cancellations"
 C3_OUT      = Path(__file__).parent / "chart_3_trends.png"
 C3_FIG_SIZE = (11, 6)
@@ -231,29 +231,26 @@ def chart_3():
 
         ax.plot(dates, smoothed, color=color, linewidth=2.2, zorder=4)
 
-        # Label at the peak (handles lines that end near zero)
-        peak_i     = int(np.argmax(smoothed))
-        peak_val   = smoothed[peak_i]
-        final_val  = smoothed[-1]
+        # Label every line at its endpoint, consistently
+        final_val = smoothed[-1]
+        # Small vertical nudge to avoid overlap at crowded values
+        ax.text(dates[-1], final_val, f"  {ARCH_LABELS[arch]}  {final_val:.0f}%",
+                ha="left", va="center", fontsize=8.5,
+                color=color, fontweight="600")
 
-        # Place label at right end if final > 2%, otherwise at peak
-        if final_val >= 2:
-            lx, ly = dates[-1], final_val
-            ax.text(lx, ly, f"  {ARCH_LABELS[arch]}  {final_val:.0f}%",
-                    ha="left", va="center", fontsize=8.5,
-                    color=color, fontweight="600")
-        elif peak_val >= 2:
-            lx, ly = dates[peak_i], peak_val
-            ax.text(lx, ly + 1.5, f"{ARCH_LABELS[arch]}  {peak_val:.0f}%",
-                    ha="center", va="bottom", fontsize=8.5,
-                    color=color, fontweight="600")
-
-    # X-axis: quarterly dates, labelled by year
-    ax.set_xlim(dates[0], dates[-1] + (dates[-1] - dates[-2]) * 4)
     import matplotlib.dates as mdates
-    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 7]))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b '%y"))
-    ax.tick_params(axis="x", colors=TEXT_MUTED, labelsize=8.5, rotation=30)
+
+    # X-axis ends at last data point — no phantom future
+    # Add just enough right padding for end labels to breathe
+    label_pad = (dates[-1] - dates[0]) * 0.22
+    ax.set_xlim(dates[0], dates[-1] + label_pad)
+
+    # Tick marks every 6 months; labels show year only at Jan ticks
+    ax.xaxis.set_minor_locator(mdates.MonthLocator(bymonth=[7]))   # Jul tick marks only
+    ax.xaxis.set_major_locator(mdates.YearLocator())               # Jan = year label
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    ax.tick_params(axis="x", which="major", colors=TEXT_MUTED, labelsize=9, rotation=0)
+    ax.tick_params(axis="x", which="minor", colors=TEXT_MUTED, length=4)
 
     ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{v:.0f}%"))
     ax.set_ylabel(C3_YLABEL, color=TEXT_MUTED, fontsize=9, labelpad=8)
