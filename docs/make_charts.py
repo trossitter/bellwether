@@ -318,19 +318,18 @@ def chart_4():
     y = np.arange(len(archs))
 
     for i, (pct, count, total, color) in enumerate(zip(pct_vals, count_vals, total_vals, colors)):
-        # Stem line from 0 to dot
         ax.plot([0, pct], [y[i], y[i]], color=color, lw=2.0, zorder=3)
-        # Dot at the percentage
         ax.plot(pct, y[i], "o", color=color, markersize=10, zorder=4)
-        # Label: percentage bold, then raw count in muted text
-        ax.text(pct + 1.2, y[i] + 0.18, f"{pct:.0f}%",
-                ha="left", va="center", fontsize=11, color=color, fontweight="700")
-        ax.text(pct + 1.2, y[i] - 0.22, f"{count:,} of {total:,} subscribers",
-                ha="left", va="center", fontsize=8, color=TEXT_MUTED)
+        # Percentage: right after the dot
+        ax.text(pct + 1.5, y[i], f"{pct:.0f}%",
+                ha="left", va="center", fontsize=12, color=color, fontweight="700")
+        # Count: further right, clearly separated, smaller
+        ax.text(pct + 9, y[i], f"{count:,} of {total:,}",
+                ha="left", va="center", fontsize=8.5, color=TEXT_MUTED)
 
     ax.set_yticks(y)
     ax.set_yticklabels([ARCH_LABELS[a] for a in archs], color=TEXT, fontsize=10)
-    ax.set_xlim(0, 108)  # breathing room for "503 of 666 subscribers" label
+    ax.set_xlim(0, 115)
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda v, _: f"{v:.0f}%"))
     ax.tick_params(axis="x", colors=TEXT_MUTED, labelsize=9)
     ax.set_xlabel(C4_SUBTITLE, color=TEXT_MUTED, fontsize=8.5, labelpad=10)
