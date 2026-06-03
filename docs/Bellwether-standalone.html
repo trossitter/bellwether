@@ -112,24 +112,29 @@ h1,h2,h3,p{margin:0;}
 @keyframes revealIn{from{transform:translateY(16px);}to{transform:none;}}
 
 /* ───────── cover ───────── */
-.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-  max-width:var(--maxw);margin:0 auto;padding:120px 40px 80px;position:relative;}
-.cover-mark{display:flex;align-items:center;gap:11px;margin-bottom:40px;}
-.cover-mark .cm-name{font-family:var(--font-mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-2);}
-.cover-h1{font-size:clamp(68px,11vw,152px);font-weight:600;letter-spacing:-0.04em;line-height:0.92;color:var(--ink);}
-.cover-line{font-size:clamp(20px,2.4vw,27px);font-weight:450;line-height:1.4;color:var(--ink-2);
-  max-width:620px;margin-top:30px;text-wrap:balance;}
-.cover-line b{color:var(--ink);font-weight:600;}
-.cover-foot{position:absolute;left:40px;right:40px;bottom:42px;display:flex;align-items:flex-end;
-  justify-content:space-between;gap:24px;}
+.cover{min-height:100vh;display:flex;flex-direction:column;background:var(--paper);position:relative;}
+.cover-head{max-width:var(--maxw);margin:0 auto;width:100%;padding:120px 40px 46px;}
+.cover-mark{display:flex;align-items:center;gap:12px;margin-bottom:38px;}
+.cover-mark .cm-name{font-family:var(--font-mono);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent-ink);}
+.cover-h1{font-family:var(--font-display);font-size:clamp(78px,13vw,190px);font-weight:500;letter-spacing:-0.03em;line-height:0.9;color:var(--ink);}
+.cover-line{font-size:clamp(22px,2.9vw,34px);font-weight:400;line-height:1.34;color:var(--ink-2);
+  max-width:760px;margin-top:30px;text-wrap:balance;letter-spacing:-0.01em;}
+.cover-line b{color:var(--ink);font-weight:500;font-family:var(--font-display);font-style:italic;}
+.cover-photo{position:relative;flex:1 1 auto;min-height:320px;width:100%;border-top:1px solid var(--hairline);
+  background:url(assets/hero-botanical.png) 50% 40%/cover no-repeat;}
+.cover-foot{position:absolute;left:0;right:0;bottom:0;padding:46px 40px 30px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  background:linear-gradient(to top, rgba(28,22,14,.42), rgba(28,22,14,0));}
+.cover-foot-in{max-width:var(--maxw);margin:0 auto;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;}
 .cover-scored{display:flex;align-items:baseline;gap:10px;}
-.cover-scored b{font-family:var(--font-mono);font-size:15px;font-weight:600;}
-.cover-scored span{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.cover-scored b{font-family:var(--font-mono);font-size:16px;font-weight:600;color:#fff;}
+.cover-scored span{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,.78);}
 .scrollcue{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:10px;
-  letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);}
-.scrollcue i{width:1px;height:26px;background:var(--ink-3);position:relative;overflow:hidden;display:block;}
-.scrollcue i::after{content:"";position:absolute;inset:0;background:var(--accent);animation:cue 2.2s infinite;}
+  letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,.8);}
+.scrollcue i{width:1px;height:26px;background:rgba(255,255,255,.5);position:relative;overflow:hidden;display:block;}
+.scrollcue i::after{content:"";position:absolute;inset:0;background:#fff;animation:cue 2.2s infinite;}
 @keyframes cue{0%{transform:translateY(-100%);}55%,100%{transform:translateY(100%);}}
+@media (max-width:680px){.cover-h1{font-size:clamp(60px,18vw,90px);}.cover-photo{min-height:260px;}}
 
 /* ───────── the frame (who/why/what/learn) ───────── */
 .frame-head{display:flex;flex-direction:column;gap:14px;margin-bottom:48px;max-width:680px;}
@@ -365,6 +370,70 @@ h1,h2,h3,p{margin:0;}
 .close-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);margin-top:42px;letter-spacing:0.03em;
   padding-top:22px;border-top:1px solid var(--hairline);display:flex;gap:10px;align-items:center;}
 
+/* ───────── botanical-luxe layer ───────── */
+.frame-title,.dos-name,.cover-h1,.close-loop{font-family:var(--font-display);}
+.frame-title{font-weight:500;letter-spacing:-0.02em;}
+.dos-name{font-weight:600;letter-spacing:-0.022em;}
+
+/* section theming — method = botanical green, output = apothecary blue */
+#method.section--tint{background:var(--green-tint);}
+#method{--accent:var(--green);--accent-ink:var(--green-ink);--accent-tint:#e9eee1;}
+#says.section--tint{background:var(--blue-tint);}
+#says{--accent:var(--blue);--accent-ink:var(--blue-ink);--accent-tint:#e5eef2;}
+
+/* the drafted notes read as elegant serif quotes */
+.msg-text{font-family:var(--font-display);font-style:italic;font-size:20.5px;line-height:1.5;letter-spacing:-0.003em;}
+
+/* finding — botanical figure beside the headline number (breaks the symmetry) */
+.finding-top{align-items:stretch;}
+.finding-fig{position:relative;flex:0 0 300px;max-width:44%;border-radius:14px;overflow:hidden;margin:0;
+  border:1px solid var(--hairline);box-shadow:var(--shadow);min-height:236px;
+  background:url(assets/hero-botanical.png) 73% 48%/cover no-repeat;}
+.finding-fig figcaption{position:absolute;left:0;right:0;bottom:0;padding:38px 16px 13px;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.09em;text-transform:uppercase;color:#fff;
+  background:linear-gradient(to top,rgba(28,22,14,.62),transparent);}
+@media(max-width:760px){.finding-fig{display:none;}}
+
+/* method — neuron feature image beside the thesis */
+.method-intro{display:grid;grid-template-columns:308px 1fr;gap:48px;align-items:center;margin-bottom:50px;}
+.method-intro .frame-head{margin-bottom:0;}
+image-slot.method-fig{display:block;width:100%;height:308px;box-shadow:var(--shadow);}
+@media(max-width:760px){.method-intro{grid-template-columns:1fr;gap:28px;}image-slot.method-fig{height:220px;}}
+
+/* decision — single-column dossier + wide two-column "at a glance" */
+.detail{display:block;}
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hairline);
+  border:1px solid var(--hairline);border-radius:12px;overflow:hidden;margin-top:24px;box-shadow:var(--shadow-sm);}
+.gfact{background:var(--surface);padding:15px 22px;display:flex;flex-direction:column;gap:5px;}
+.gfact-k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;color:var(--ink-3);}
+.gfact-v{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+.gfact-v.accent{color:var(--accent-ink);}
+/* glance shares the header band with the subscriber identity (v1 placement) */
+.dos-head{display:flex;justify-content:space-between;align-items:flex-start;gap:46px;flex-wrap:wrap;}
+.dos-id{flex:1 1 250px;min-width:230px;}
+.dos-head .glance{flex:0 1 448px;margin-top:6px;align-self:flex-start;}
+.dos-head .gfact{padding:12px 18px;gap:4px;}
+.dos-head .gfact-v{font-size:15px;}
+@media(max-width:520px){.glance{grid-template-columns:1fr;}}
+
+/* roster — by-risk / by-reason toggle */
+.roster-tabs{display:flex;gap:4px;padding:5px;margin:3px 5px 4px;background:var(--bg-tint);border-radius:10px;}
+.roster-tab{flex:1;appearance:none;border:0;cursor:pointer;background:transparent;border-radius:7px;
+  font-family:var(--font-mono);font-size:9.5px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+  padding:7px 6px;color:var(--ink-3);transition:all .15s;}
+.roster-tab.on{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow-sm);}
+.roster-tab:hover:not(.on){color:var(--ink-2);}
+.roster-cap{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;color:var(--ink-3);padding:3px 14px 10px;letter-spacing:0.02em;}
+
+/* close — a deep botanical band to end on */
+.close{max-width:none;margin:0;background:var(--green-ink);color:var(--paper);padding:120px 0 140px;}
+.close > *{max-width:var(--maxw);margin-left:auto;margin-right:auto;padding-left:40px;padding-right:40px;width:100%;}
+.close .eyebrow.muted{color:rgba(241,233,220,.6);}
+.close-loop em{color:var(--accent);font-style:normal;font-weight:500;}
+.close-loop .arrow{color:rgba(241,233,220,.4);}
+.close-sub{color:rgba(241,233,220,.8);}
+.close-meta{color:rgba(241,233,220,.62);border-top-color:rgba(241,233,220,.18);}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
 </style>
 </head>
@@ -373,8 +442,8 @@ h1,h2,h3,p{margin:0;}
 
 <template id="__bundler_thumbnail">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" fill="#eaf1fc"/>
-    <g fill="#2E6FDD">
+    <rect width="100" height="100" fill="#efe2cf"/>
+    <g fill="#a4682f">
       <circle cx="38" cy="34" r="4.4"/><circle cx="50" cy="34" r="4.4"/><circle cx="62" cy="34" r="4.4"/>
       <circle cx="38" cy="50" r="4.4"/><circle cx="50" cy="50" r="4.4"/><circle cx="62" cy="50" r="4.4"/>
       <circle cx="38" cy="66" r="4.4"/><circle cx="50" cy="66" r="4.4"/><circle cx="62" cy="66" r="4.4"/>
@@ -386,6 +455,7 @@ h1,h2,h3,p{margin:0;}
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
+<script src="image-slot.js"></script>
 <script type="text/babel">
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
 
@@ -1406,23 +1476,30 @@ function fmt(n) {return n.toLocaleString("en-US");}
 function Cover({ fleet }) {
   return (
     <section id="cover" className="cover" data-screen-label="Cover">
-      <Reveal className="cover-mark">
-        <DotMark size={22} color="var(--accent)" />
-        <span className="cm-name">Subscriber retention intelligence · built for Thesis</span>
-      </Reveal>
-      <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
-      <Reveal as="p" className="cover-line" delay={2}>
-        They chose Thesis because they own their mind.<br />
-        <b>Know when that mind is starting to drift.</b>
-      </Reveal>
-      <div className="cover-foot">
-        <Reveal className="cover-scored" delay={3}>
-          <b>{fmt(fleet.scored)}</b>
-          <span>subscribers scored · {fleet.cycleLabel}</span>
+      <div className="cover-head">
+        <Reveal className="cover-mark">
+          <DotMark size={22} color="var(--accent)" />
+          <span className="cm-name">Retention intelligence · built for Thesis</span>
         </Reveal>
-        <div className="scrollcue"><span>The finding</span><i /></div>
+        <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
+        <Reveal as="p" className="cover-line" delay={2}>
+          They chose Thesis because they own their mind.{" "}
+          <b>Know the moment that mind starts to drift</b> — and what to do about it.
+        </Reveal>
+      </div>
+      <div className="cover-photo">
+        <div className="cover-foot">
+          <div className="cover-foot-in">
+            <Reveal className="cover-scored" delay={3}>
+              <b>{fmt(fleet.scored)}</b>
+              <span>subscribers scored · {fleet.cycleLabel}</span>
+            </Reveal>
+            <div className="scrollcue"><span>The finding</span><i /></div>
+          </div>
+        </div>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── The Finding ─────────────────────────
@@ -1434,10 +1511,10 @@ function FindingSection({ fleet, archetypes }) {
       <div className="finding-top">
         <Reveal className="pull" delay={1}>
           <div className="pull-num"><em>{fmt(fleet.atRisk)}</em></div>
-          <div className="pull-label"><b>subscribers at risk</b> this month</div>
+          <div className="pull-label"><b>subscribers at risk</b> this month, across <b>{fmt(fleet.scored)}</b> scored</div>
         </Reveal>
-        <Reveal className="pull-side" delay={2}>
-          across <b>{fmt(fleet.scored)}</b> active Thesis<br />subscribers scored this cycle
+        <Reveal as="figure" className="finding-fig" delay={2}>
+          <figcaption>Scored nightly · five behavioral archetypes</figcaption>
         </Reveal>
       </div>
 
@@ -1470,46 +1547,41 @@ function FindingSection({ fleet, archetypes }) {
                     </div>
                   </td>
                 </tr>);
+
             })}
           </tbody>
         </table>
       </Reveal>
     </section>);
+
 }
 
 // ───────────────────────── Method (4 questions) ─────────────────────────
 const PILLARS = [
-  {
-    n: "01", q: "Who",
-    d: "26,584 subscribers scored each cycle. Behavioral signals — order cadence, billing timing, formula history, email engagement — produce a calibrated churn probability for every one. The top 41 are escalated for human review this cycle."
-  },
-  {
-    n: "02", q: "Why",
-    d: "Each score comes with an explanation: the signals driving it, how much each one contributes, and which behavioral archetype they map to. You're not approving a black-box recommendation. You're approving a reasoned one."
-  },
-  {
-    n: "03", q: "What",
-    d: "The archetype determines the action. A payment decline gets a frictionless card-update link — not a win-back coupon. Price anxiety gets a cost-per-day reframe. Overstock gets a cadence adjustment. The right fix for the actual cause."
-  },
-  {
-    n: "04", q: "Learn",
-    d: "Every approved action creates a natural experiment: 10% held back as a control, a read-out date set. The model's next training run sees real labeled outcomes. Each cycle, the system gets incrementally sharper."
-  }
-];
+{ n: "01", q: "Who", d: "Which subscribers are slipping — ranked by risk and routed to a rep for review." },
+{ n: "02", q: "Why", d: "The behavioral signals behind each score, weighted and legible. Not a black box." },
+{ n: "03", q: "What", d: "A specific, on-brand action matched to the cause — not a blanket coupon." },
+{ n: "04", q: "Learn", d: "A holdout and a read-out date, so every action teaches the next one." }];
 
 function MethodSection() {
   return (
     <section id="method" className="section--tint" data-screen-label="Method">
       <div className="inner">
-        <Reveal className="frame-head">
-          <span className="eyebrow">02 · The method</span>
-          <h2 className="frame-title">A decision system, not a dashboard.</h2>
-          <p className="frame-sub">For each at-risk subscriber, Bellwether answers four questions — and closes the loop on whether the answer worked.</p>
-        </Reveal>
+        <div className="method-intro">
+          <Reveal>
+            <image-slot id="neuron" class="method-fig" shape="rounded" radius="14"
+              placeholder="Drop a neuron / mechanism image"></image-slot>
+          </Reveal>
+          <Reveal className="frame-head" delay={1}>
+            <span className="eyebrow">02 · The method</span>
+            <h2 className="frame-title">A decision system, not a dashboard.</h2>
+            <p className="frame-sub">For each at-risk subscriber, Bellwether answers four questions — and closes the loop on whether the answer worked.</p>
+          </Reveal>
+        </div>
         <Reveal delay={1}>
           <div className="pillars">
             {PILLARS.map((p) =>
-              <div className="pillar" key={p.n}>
+            <div className="pillar" key={p.n}>
                 <span className="pillar-n">{p.n}</span>
                 <span className="pillar-q">{p.q}</span>
                 <span className="pillar-d">{p.d}</span>
@@ -1519,13 +1591,27 @@ function MethodSection() {
         </Reveal>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── Decision dashboard ─────────────────────────
-function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
-  const ranked = useMemoS(() => [...subscribers].sort((a, b) => b.score - a.score), [subscribers]);
-  const [selectedId, setSelectedId] = useStateS(ranked[0].id);
-  const [status, setStatus] = useStateS({});
+function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle }) {
+  const [sortMode, setSortMode] = useStateS("risk"); // 'risk' | 'reason'
+  const prevalence = useMemoS(
+    () => Object.fromEntries(archetypes.map((a) => [a.key, a])),
+    [archetypes]
+  );
+  const ranked = useMemoS(() => {
+    const arr = [...subscribers];
+    if (sortMode === "reason")
+      arr.sort((a, b) => (prevalence[b.archetypeKey]?.atRisk || 0) - (prevalence[a.archetypeKey]?.atRisk || 0));
+    else arr.sort((a, b) => b.score - a.score);
+    return arr;
+  }, [sortMode, subscribers, prevalence]);
+  const [selectedId, setSelectedId] = useStateS(
+    [...subscribers].sort((a, b) => b.score - a.score)[0].id
+  );
+  const [status, setStatus] = useStateS({}); // id -> 'approved' | 'held'
   const sub = subscribers.find((s) => s.id === selectedId);
   const st = status[selectedId];
   const maxWeight = Math.max(...sub.factors.map((f) => Math.abs(f.weight)));
@@ -1536,14 +1622,23 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
     <section id="review" className="section section--wide" data-screen-label="Review queue">
       <Reveal className="dec-head">
         <span className="eyebrow">03 · The review queue</span>
-        <h2 className="frame-title">Who is at risk, why, what to do, and how we'll know it worked.</h2>
-        <p className="frame-sub">Of {fmt(fleet.atRisk)} at-risk, {fleet.reviewQueue} are escalated for human review this cycle. Here are the top five — pick one to see the full picture.</p>
+        <h2 className="frame-title">Five subscribers, four answers each.</h2>
+        <p className="frame-sub">Of {fmt(fleet.atRisk)} at-risk, {fleet.reviewQueue} are escalated for human review this cycle. Here are the top five — pick one.</p>
       </Reveal>
 
       <div className="deckmain">
         {/* roster */}
         <aside className="roster">
-          <div className="roster-head"><span>Roster · ranked by risk</span></div>
+          <div className="roster-head"><span>Roster</span></div>
+          <div className="roster-tabs" role="tablist">
+            <button role="tab" className={`roster-tab ${sortMode === "risk" ? "on" : ""}`} onClick={() => setSortMode("risk")}>By risk</button>
+            <button role="tab" className={`roster-tab ${sortMode === "reason" ? "on" : ""}`} onClick={() => setSortMode("reason")}>By reason</button>
+          </div>
+          <div className="roster-cap">
+            {sortMode === "risk"
+              ? "Ranked by churn-risk score"
+              : "Ordered by how often this reason drives churn fleet-wide"}
+          </div>
           {ranked.map((s) => {
             const tier = tierOf(s.score);
             return (
@@ -1551,13 +1646,18 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                 <span className="row-avatar">{s.initials}</span>
                 <span className="row-body">
                   <span className="row-name">{s.name}</span>
-                  <span className="row-sku">{s.archetype}</span>
+                  <span className="row-sku">
+                    {sortMode === "reason"
+                      ? `${s.archetype} · ${fmt(prevalence[s.archetypeKey].atRisk)} at risk`
+                      : s.formula}
+                  </span>
                 </span>
                 <span className="row-meta">
                   <span className="row-score" style={{ color: TIER[tier].color }}>{s.score}</span>
                   <span className="row-pip" style={{ background: TIER[tier].color }} />
                 </span>
               </button>);
+
           })}
           <div className="roster-foot">Showing top <b>5</b> of <b>{fleet.reviewQueue}</b> flagged for review</div>
         </aside>
@@ -1565,9 +1665,22 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
         {/* detail */}
         <div className="detail" key={selectedId}>
           <div className="detail-main">
-            <div className="dos-arch"><span className="tag">{sub.archetype}</span></div>
-            <h3 className="dos-name">{sub.name}</h3>
-            <div className="dos-loc">{sub.location}</div>
+            <div className="dos-head">
+              <div className="dos-id">
+                <div className="dos-arch"><span className="tag">{sub.archetype}</span></div>
+                <h3 className="dos-name">{sub.name}</h3>
+                <div className="dos-loc">{sub.location}</div>
+              </div>
+              {/* at a glance — shares the header band with the subscriber (v1 layout) */}
+              <div className="glance">
+                <div className="gfact"><div className="gfact-k">Product</div><div className="gfact-v">{sub.formula}</div></div>
+                <div className="gfact"><div className="gfact-k">Cadence</div><div className="gfact-v">{sub.cadence}</div></div>
+                <div className="gfact"><div className="gfact-k">Tenure</div><div className="gfact-v">{sub.tenureLabel}</div></div>
+                <div className="gfact"><div className="gfact-k">Lifetime value</div><div className="gfact-v accent">${fmt(sub.ltv)}</div></div>
+                <div className="gfact"><div className="gfact-k">Next renewal</div><div className="gfact-v">{sub.nextRenewal}</div></div>
+                <div className="gfact"><div className="gfact-k">Plan</div><div className="gfact-v">${fleet.pricePoint}/mo</div></div>
+              </div>
+            </div>
             <p className="dos-headline">{sub.headline}</p>
 
             {/* 01 who / how risky */}
@@ -1583,7 +1696,7 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                     <span><i style={{ background: "var(--sage)" }} />Watch &lt; 30</span>
                   </div>
                   {st === "approved" &&
-                    <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
+                  <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
                       <span> ({TIER[tierOf(projectedRisk(sub))].label.toLowerCase()})</span></div>
                   }
                 </div>
@@ -1616,7 +1729,7 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                   <div><div className="feet-k">Cost</div><div className="feet-v">{sub.action.cost}</div></div>
                 </div>
                 {!st ?
-                  <div className="action-cta">
+                <div className="action-cta">
                     <button className="btn btn-primary" onClick={() => decide("approved")}>Approve action</button>
                     <button className="btn btn-ghost" onClick={() => decide("held")}>Hold &amp; watch</button>
                     <div className="alts">
@@ -1624,7 +1737,8 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                       {sub.alternatives.map((a, i) => <span key={i} className="alt">{a}</span>)}
                     </div>
                   </div> :
-                  <div className="action-cta">
+
+                <div className="action-cta">
                     <button className="btn btn-undo" onClick={undo}>↺ Undo decision</button>
                   </div>
                 }
@@ -1645,29 +1759,18 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                   <div className="m-line"><span className="m-k">Baseline</span><span className="m-v">{sub.measure.baseline}</span></div>
                 </div>
                 {st === "approved" &&
-                  <div className="m-active"><span className="m-dot" /> Experiment live · {100 - sub.measure.holdoutPct}% treated, {sub.measure.holdoutPct}% held back · reads out {sub.measure.checkBack}</div>
+                <div className="m-active"><span className="m-dot" /> Experiment live · {100 - sub.measure.holdoutPct}% treated, {sub.measure.holdoutPct}% held back · reads out {sub.measure.checkBack}</div>
                 }
                 {st === "held" &&
-                  <div className="m-active held"><span className="m-dot" /> Monitoring only · no treatment applied · re-scores next cycle</div>
+                <div className="m-active held"><span className="m-dot" /> Monitoring only · no treatment applied · re-scores next cycle</div>
                 }
               </div>
             </div>
           </div>
-
-          {/* floating rep glance card */}
-          <aside className="repcard">
-            <div className="rep-hd"><span className="rep-avatar2">{sub.initials}</span><b>At a glance</b></div>
-            <div className="rep-list">
-              <div className="rep-row"><span className="rep-k">Product</span><span className="rep-v">{sub.formula}</span></div>
-              <div className="rep-row"><span className="rep-k">Cadence</span><span className="rep-v">{sub.cadence}</span></div>
-              <div className="rep-row"><span className="rep-k">Tenure</span><span className="rep-v">{sub.tenureLabel}</span></div>
-              <div className="rep-row"><span className="rep-k">Lifetime value</span><span className="rep-v accent">${fmt(sub.ltv)}</span></div>
-              <div className="rep-row"><span className="rep-k">Next renewal</span><span className="rep-v">{sub.nextRenewal}</span></div>
-            </div>
-          </aside>
         </div>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── Messages ─────────────────────────
@@ -1703,10 +1806,12 @@ function MessagesSection({ subscribers, tierOf }) {
                   </div>
                 </div>
               </Reveal>);
+
           })}
         </div>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── Close ─────────────────────────
@@ -1715,32 +1820,28 @@ function CloseSection({ fleet }) {
     <section id="close" className="close" data-screen-label="Close">
       <Reveal as="div" className="eyebrow muted">The loop</Reveal>
       <Reveal as="div" className="close-loop" delay={1} style={{ marginTop: 22 }}>
-        <em>Score</em><span className="arrow">→</span>
-        <em>Intervene</em><span className="arrow">→</span>
-        <em>Dispatch</em><span className="arrow">→</span>
-        <em>Learn</em>
+        <em>Who</em><span className="arrow">→</span><em>Why</em><span className="arrow">→</span><em>What</em><span className="arrow">→</span><em>Learn</em><span className="arrow">↻</span>
       </Reveal>
       <Reveal as="p" className="close-sub" delay={2}>
-        Right now, dispatch is simulated. The only gap between this and live Klaviyo sends is swapping one adapter. When outcomes return — did they churn after the message? — they feed the next model cycle. The system gets sharper every run.
       </Reveal>
       <Reveal as="div" className="close-meta" delay={3}>
         <DotMark size={14} color="var(--ink-3)" />
         Bellwether · {fleet.cycleLabel} · {fleet.modelNote}
       </Reveal>
     </section>);
+
 }
 
 Object.assign(window, {
   Cover, FindingSection, MethodSection, DecisionSection, MessagesSection, CloseSection, projectedRisk
 });
-
 </script>
 <script type="text/babel">
 // app.jsx — Bellwether (Thesis) shell: topbar, dot-nav, section composition, tweaks.
 const { useState, useEffect, useRef } = React;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accent": "#2E6FDD",
+  "accent": "#a4682f",
   "gaugeStyle": "gauge",
   "tableDensity": "regular"
 }/*EDITMODE-END*/;
@@ -1834,7 +1935,7 @@ function App() {
         <Cover fleet={FLEET} />
         <FindingSection fleet={FLEET} archetypes={ARCHETYPES} />
         <MethodSection />
-        <DecisionSection fleet={FLEET} subscribers={SUBSCRIBERS} tierOf={tierOf} gaugeStyle={t.gaugeStyle} />
+        <DecisionSection fleet={FLEET} subscribers={SUBSCRIBERS} archetypes={ARCHETYPES} tierOf={tierOf} gaugeStyle={t.gaugeStyle} />
         <MessagesSection subscribers={SUBSCRIBERS} tierOf={tierOf} />
         <CloseSection fleet={FLEET} />
       </main>
@@ -1843,7 +1944,7 @@ function App() {
       <TweaksPanel>
         <TweakSection label="Brand" />
         <TweakColor label="Accent" value={t.accent}
-          options={["#2E6FDD", "#1F7A5B", "#6A4BD6", "#0E2A55"]}
+          options={["#a4682f", "#4f6147", "#3c6377", "#7c4d22"]}
           onChange={(v) => setTweak("accent", v)} />
         <TweakSection label="Risk display" />
         <TweakRadio label="Risk viz" value={t.gaugeStyle}

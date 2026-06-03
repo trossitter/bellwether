@@ -10,23 +10,30 @@ function fmt(n) {return n.toLocaleString("en-US");}
 function Cover({ fleet }) {
   return (
     <section id="cover" className="cover" data-screen-label="Cover">
-      <Reveal className="cover-mark">
-        <DotMark size={22} color="var(--accent)" />
-        <span className="cm-name">Subscriber retention intelligence · built for Thesis</span>
-      </Reveal>
-      <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
-      <Reveal as="p" className="cover-line" delay={2}>
-        They chose Thesis because they own their mind.<br />
-        <b>Know when that mind is starting to drift.</b>
-      </Reveal>
-      <div className="cover-foot">
-        <Reveal className="cover-scored" delay={3}>
-          <b>{fmt(fleet.scored)}</b>
-          <span>subscribers scored · {fleet.cycleLabel}</span>
+      <div className="cover-head">
+        <Reveal className="cover-mark">
+          <DotMark size={22} color="var(--accent)" />
+          <span className="cm-name">Retention intelligence · built for Thesis</span>
         </Reveal>
-        <div className="scrollcue"><span>The finding</span><i /></div>
+        <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
+        <Reveal as="p" className="cover-line" delay={2}>
+          They chose Thesis because they own their mind.{" "}
+          <b>Know the moment that mind starts to drift</b> — and what to do about it.
+        </Reveal>
+      </div>
+      <div className="cover-photo">
+        <div className="cover-foot">
+          <div className="cover-foot-in">
+            <Reveal className="cover-scored" delay={3}>
+              <b>{fmt(fleet.scored)}</b>
+              <span>subscribers scored · {fleet.cycleLabel}</span>
+            </Reveal>
+            <div className="scrollcue"><span>The finding</span><i /></div>
+          </div>
+        </div>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── The Finding ─────────────────────────
@@ -38,10 +45,10 @@ function FindingSection({ fleet, archetypes }) {
       <div className="finding-top">
         <Reveal className="pull" delay={1}>
           <div className="pull-num"><em>{fmt(fleet.atRisk)}</em></div>
-          <div className="pull-label"><b>subscribers at risk</b> this month</div>
+          <div className="pull-label"><b>subscribers at risk</b> this month, across <b>{fmt(fleet.scored)}</b> scored</div>
         </Reveal>
-        <Reveal className="pull-side" delay={2}>
-          across <b>{fmt(fleet.scored)}</b> active Thesis<br />subscribers scored this cycle
+        <Reveal as="figure" className="finding-fig" delay={2}>
+          <figcaption>Scored nightly · five behavioral archetypes</figcaption>
         </Reveal>
       </div>
 
@@ -74,46 +81,41 @@ function FindingSection({ fleet, archetypes }) {
                     </div>
                   </td>
                 </tr>);
+
             })}
           </tbody>
         </table>
       </Reveal>
     </section>);
+
 }
 
 // ───────────────────────── Method (4 questions) ─────────────────────────
 const PILLARS = [
-  {
-    n: "01", q: "Who",
-    d: "26,584 subscribers scored each cycle. Behavioral signals — order cadence, billing timing, formula history, email engagement — produce a calibrated churn probability for every one. The top 41 are escalated for human review this cycle."
-  },
-  {
-    n: "02", q: "Why",
-    d: "Each score comes with an explanation: the signals driving it, how much each one contributes, and which behavioral archetype they map to. You're not approving a black-box recommendation. You're approving a reasoned one."
-  },
-  {
-    n: "03", q: "What",
-    d: "The archetype determines the action. A payment decline gets a frictionless card-update link — not a win-back coupon. Price anxiety gets a cost-per-day reframe. Overstock gets a cadence adjustment. The right fix for the actual cause."
-  },
-  {
-    n: "04", q: "Learn",
-    d: "Every approved action creates a natural experiment: 10% held back as a control, a read-out date set. The model's next training run sees real labeled outcomes. Each cycle, the system gets incrementally sharper."
-  }
-];
+{ n: "01", q: "Who", d: "Which subscribers are slipping — ranked by risk and routed to a rep for review." },
+{ n: "02", q: "Why", d: "The behavioral signals behind each score, weighted and legible. Not a black box." },
+{ n: "03", q: "What", d: "A specific, on-brand action matched to the cause — not a blanket coupon." },
+{ n: "04", q: "Learn", d: "A holdout and a read-out date, so every action teaches the next one." }];
 
 function MethodSection() {
   return (
     <section id="method" className="section--tint" data-screen-label="Method">
       <div className="inner">
-        <Reveal className="frame-head">
-          <span className="eyebrow">02 · The method</span>
-          <h2 className="frame-title">A decision system, not a dashboard.</h2>
-          <p className="frame-sub">For each at-risk subscriber, Bellwether answers four questions — and closes the loop on whether the answer worked.</p>
-        </Reveal>
+        <div className="method-intro">
+          <Reveal>
+            <image-slot id="neuron" class="method-fig" shape="rounded" radius="14"
+              placeholder="Drop a neuron / mechanism image"></image-slot>
+          </Reveal>
+          <Reveal className="frame-head" delay={1}>
+            <span className="eyebrow">02 · The method</span>
+            <h2 className="frame-title">A decision system, not a dashboard.</h2>
+            <p className="frame-sub">For each at-risk subscriber, Bellwether answers four questions — and closes the loop on whether the answer worked.</p>
+          </Reveal>
+        </div>
         <Reveal delay={1}>
           <div className="pillars">
             {PILLARS.map((p) =>
-              <div className="pillar" key={p.n}>
+            <div className="pillar" key={p.n}>
                 <span className="pillar-n">{p.n}</span>
                 <span className="pillar-q">{p.q}</span>
                 <span className="pillar-d">{p.d}</span>
@@ -123,13 +125,27 @@ function MethodSection() {
         </Reveal>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── Decision dashboard ─────────────────────────
-function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
-  const ranked = useMemoS(() => [...subscribers].sort((a, b) => b.score - a.score), [subscribers]);
-  const [selectedId, setSelectedId] = useStateS(ranked[0].id);
-  const [status, setStatus] = useStateS({});
+function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle }) {
+  const [sortMode, setSortMode] = useStateS("risk"); // 'risk' | 'reason'
+  const prevalence = useMemoS(
+    () => Object.fromEntries(archetypes.map((a) => [a.key, a])),
+    [archetypes]
+  );
+  const ranked = useMemoS(() => {
+    const arr = [...subscribers];
+    if (sortMode === "reason")
+      arr.sort((a, b) => (prevalence[b.archetypeKey]?.atRisk || 0) - (prevalence[a.archetypeKey]?.atRisk || 0));
+    else arr.sort((a, b) => b.score - a.score);
+    return arr;
+  }, [sortMode, subscribers, prevalence]);
+  const [selectedId, setSelectedId] = useStateS(
+    [...subscribers].sort((a, b) => b.score - a.score)[0].id
+  );
+  const [status, setStatus] = useStateS({}); // id -> 'approved' | 'held'
   const sub = subscribers.find((s) => s.id === selectedId);
   const st = status[selectedId];
   const maxWeight = Math.max(...sub.factors.map((f) => Math.abs(f.weight)));
@@ -140,14 +156,23 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
     <section id="review" className="section section--wide" data-screen-label="Review queue">
       <Reveal className="dec-head">
         <span className="eyebrow">03 · The review queue</span>
-        <h2 className="frame-title">Who is at risk, why, what to do, and how we'll know it worked.</h2>
-        <p className="frame-sub">Of {fmt(fleet.atRisk)} at-risk, {fleet.reviewQueue} are escalated for human review this cycle. Here are the top five — pick one to see the full picture.</p>
+        <h2 className="frame-title">Five subscribers, four answers each.</h2>
+        <p className="frame-sub">Of {fmt(fleet.atRisk)} at-risk, {fleet.reviewQueue} are escalated for human review this cycle. Here are the top five — pick one.</p>
       </Reveal>
 
       <div className="deckmain">
         {/* roster */}
         <aside className="roster">
-          <div className="roster-head"><span>Roster · ranked by risk</span></div>
+          <div className="roster-head"><span>Roster</span></div>
+          <div className="roster-tabs" role="tablist">
+            <button role="tab" className={`roster-tab ${sortMode === "risk" ? "on" : ""}`} onClick={() => setSortMode("risk")}>By risk</button>
+            <button role="tab" className={`roster-tab ${sortMode === "reason" ? "on" : ""}`} onClick={() => setSortMode("reason")}>By reason</button>
+          </div>
+          <div className="roster-cap">
+            {sortMode === "risk"
+              ? "Ranked by churn-risk score"
+              : "Ordered by how often this reason drives churn fleet-wide"}
+          </div>
           {ranked.map((s) => {
             const tier = tierOf(s.score);
             return (
@@ -155,13 +180,18 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                 <span className="row-avatar">{s.initials}</span>
                 <span className="row-body">
                   <span className="row-name">{s.name}</span>
-                  <span className="row-sku">{s.archetype}</span>
+                  <span className="row-sku">
+                    {sortMode === "reason"
+                      ? `${s.archetype} · ${fmt(prevalence[s.archetypeKey].atRisk)} at risk`
+                      : s.formula}
+                  </span>
                 </span>
                 <span className="row-meta">
                   <span className="row-score" style={{ color: TIER[tier].color }}>{s.score}</span>
                   <span className="row-pip" style={{ background: TIER[tier].color }} />
                 </span>
               </button>);
+
           })}
           <div className="roster-foot">Showing top <b>5</b> of <b>{fleet.reviewQueue}</b> flagged for review</div>
         </aside>
@@ -169,9 +199,22 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
         {/* detail */}
         <div className="detail" key={selectedId}>
           <div className="detail-main">
-            <div className="dos-arch"><span className="tag">{sub.archetype}</span></div>
-            <h3 className="dos-name">{sub.name}</h3>
-            <div className="dos-loc">{sub.location}</div>
+            <div className="dos-head">
+              <div className="dos-id">
+                <div className="dos-arch"><span className="tag">{sub.archetype}</span></div>
+                <h3 className="dos-name">{sub.name}</h3>
+                <div className="dos-loc">{sub.location}</div>
+              </div>
+              {/* at a glance — shares the header band with the subscriber (v1 layout) */}
+              <div className="glance">
+                <div className="gfact"><div className="gfact-k">Product</div><div className="gfact-v">{sub.formula}</div></div>
+                <div className="gfact"><div className="gfact-k">Cadence</div><div className="gfact-v">{sub.cadence}</div></div>
+                <div className="gfact"><div className="gfact-k">Tenure</div><div className="gfact-v">{sub.tenureLabel}</div></div>
+                <div className="gfact"><div className="gfact-k">Lifetime value</div><div className="gfact-v accent">${fmt(sub.ltv)}</div></div>
+                <div className="gfact"><div className="gfact-k">Next renewal</div><div className="gfact-v">{sub.nextRenewal}</div></div>
+                <div className="gfact"><div className="gfact-k">Plan</div><div className="gfact-v">${fleet.pricePoint}/mo</div></div>
+              </div>
+            </div>
             <p className="dos-headline">{sub.headline}</p>
 
             {/* 01 who / how risky */}
@@ -187,7 +230,7 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                     <span><i style={{ background: "var(--sage)" }} />Watch &lt; 30</span>
                   </div>
                   {st === "approved" &&
-                    <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
+                  <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
                       <span> ({TIER[tierOf(projectedRisk(sub))].label.toLowerCase()})</span></div>
                   }
                 </div>
@@ -220,7 +263,7 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                   <div><div className="feet-k">Cost</div><div className="feet-v">{sub.action.cost}</div></div>
                 </div>
                 {!st ?
-                  <div className="action-cta">
+                <div className="action-cta">
                     <button className="btn btn-primary" onClick={() => decide("approved")}>Approve action</button>
                     <button className="btn btn-ghost" onClick={() => decide("held")}>Hold &amp; watch</button>
                     <div className="alts">
@@ -228,7 +271,8 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                       {sub.alternatives.map((a, i) => <span key={i} className="alt">{a}</span>)}
                     </div>
                   </div> :
-                  <div className="action-cta">
+
+                <div className="action-cta">
                     <button className="btn btn-undo" onClick={undo}>↺ Undo decision</button>
                   </div>
                 }
@@ -249,29 +293,18 @@ function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
                   <div className="m-line"><span className="m-k">Baseline</span><span className="m-v">{sub.measure.baseline}</span></div>
                 </div>
                 {st === "approved" &&
-                  <div className="m-active"><span className="m-dot" /> Experiment live · {100 - sub.measure.holdoutPct}% treated, {sub.measure.holdoutPct}% held back · reads out {sub.measure.checkBack}</div>
+                <div className="m-active"><span className="m-dot" /> Experiment live · {100 - sub.measure.holdoutPct}% treated, {sub.measure.holdoutPct}% held back · reads out {sub.measure.checkBack}</div>
                 }
                 {st === "held" &&
-                  <div className="m-active held"><span className="m-dot" /> Monitoring only · no treatment applied · re-scores next cycle</div>
+                <div className="m-active held"><span className="m-dot" /> Monitoring only · no treatment applied · re-scores next cycle</div>
                 }
               </div>
             </div>
           </div>
-
-          {/* floating rep glance card */}
-          <aside className="repcard">
-            <div className="rep-hd"><span className="rep-avatar2">{sub.initials}</span><b>At a glance</b></div>
-            <div className="rep-list">
-              <div className="rep-row"><span className="rep-k">Product</span><span className="rep-v">{sub.formula}</span></div>
-              <div className="rep-row"><span className="rep-k">Cadence</span><span className="rep-v">{sub.cadence}</span></div>
-              <div className="rep-row"><span className="rep-k">Tenure</span><span className="rep-v">{sub.tenureLabel}</span></div>
-              <div className="rep-row"><span className="rep-k">Lifetime value</span><span className="rep-v accent">${fmt(sub.ltv)}</span></div>
-              <div className="rep-row"><span className="rep-k">Next renewal</span><span className="rep-v">{sub.nextRenewal}</span></div>
-            </div>
-          </aside>
         </div>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── Messages ─────────────────────────
@@ -307,10 +340,12 @@ function MessagesSection({ subscribers, tierOf }) {
                   </div>
                 </div>
               </Reveal>);
+
           })}
         </div>
       </div>
     </section>);
+
 }
 
 // ───────────────────────── Close ─────────────────────────
@@ -319,19 +354,16 @@ function CloseSection({ fleet }) {
     <section id="close" className="close" data-screen-label="Close">
       <Reveal as="div" className="eyebrow muted">The loop</Reveal>
       <Reveal as="div" className="close-loop" delay={1} style={{ marginTop: 22 }}>
-        <em>Score</em><span className="arrow">→</span>
-        <em>Intervene</em><span className="arrow">→</span>
-        <em>Dispatch</em><span className="arrow">→</span>
-        <em>Learn</em>
+        <em>Who</em><span className="arrow">→</span><em>Why</em><span className="arrow">→</span><em>What</em><span className="arrow">→</span><em>Learn</em><span className="arrow">↻</span>
       </Reveal>
       <Reveal as="p" className="close-sub" delay={2}>
-        Right now, dispatch is simulated. The only gap between this and live Klaviyo sends is swapping one adapter. When outcomes return — did they churn after the message? — they feed the next model cycle. The system gets sharper every run.
       </Reveal>
       <Reveal as="div" className="close-meta" delay={3}>
         <DotMark size={14} color="var(--ink-3)" />
         Bellwether · {fleet.cycleLabel} · {fleet.modelNote}
       </Reveal>
     </section>);
+
 }
 
 Object.assign(window, {

@@ -2,7 +2,7 @@
 const { useState, useEffect, useRef } = React;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "accent": "#2E6FDD",
+  "accent": "#a4682f",
   "gaugeStyle": "gauge",
   "tableDensity": "regular"
 }/*EDITMODE-END*/;
@@ -96,7 +96,7 @@ function App() {
         <Cover fleet={FLEET} />
         <FindingSection fleet={FLEET} archetypes={ARCHETYPES} />
         <MethodSection />
-        <DecisionSection fleet={FLEET} subscribers={SUBSCRIBERS} tierOf={tierOf} gaugeStyle={t.gaugeStyle} />
+        <DecisionSection fleet={FLEET} subscribers={SUBSCRIBERS} archetypes={ARCHETYPES} tierOf={tierOf} gaugeStyle={t.gaugeStyle} />
         <MessagesSection subscribers={SUBSCRIBERS} tierOf={tierOf} />
         <CloseSection fleet={FLEET} />
       </main>
@@ -105,7 +105,7 @@ function App() {
       <TweaksPanel>
         <TweakSection label="Brand" />
         <TweakColor label="Accent" value={t.accent}
-          options={["#2E6FDD", "#1F7A5B", "#6A4BD6", "#0E2A55"]}
+          options={["#a4682f", "#4f6147", "#3c6377", "#7c4d22"]}
           onChange={(v) => setTweak("accent", v)} />
         <TweakSection label="Risk display" />
         <TweakRadio label="Risk viz" value={t.gaugeStyle}

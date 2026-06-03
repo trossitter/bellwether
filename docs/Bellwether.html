@@ -112,24 +112,29 @@ h1,h2,h3,p{margin:0;}
 @keyframes revealIn{from{transform:translateY(16px);}to{transform:none;}}
 
 /* ───────── cover ───────── */
-.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
-  max-width:var(--maxw);margin:0 auto;padding:120px 40px 80px;position:relative;}
-.cover-mark{display:flex;align-items:center;gap:11px;margin-bottom:40px;}
-.cover-mark .cm-name{font-family:var(--font-mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-2);}
-.cover-h1{font-size:clamp(68px,11vw,152px);font-weight:600;letter-spacing:-0.04em;line-height:0.92;color:var(--ink);}
-.cover-line{font-size:clamp(20px,2.4vw,27px);font-weight:450;line-height:1.4;color:var(--ink-2);
-  max-width:620px;margin-top:30px;text-wrap:balance;}
-.cover-line b{color:var(--ink);font-weight:600;}
-.cover-foot{position:absolute;left:40px;right:40px;bottom:42px;display:flex;align-items:flex-end;
-  justify-content:space-between;gap:24px;}
+.cover{min-height:100vh;display:flex;flex-direction:column;background:var(--paper);position:relative;}
+.cover-head{max-width:var(--maxw);margin:0 auto;width:100%;padding:120px 40px 46px;}
+.cover-mark{display:flex;align-items:center;gap:12px;margin-bottom:38px;}
+.cover-mark .cm-name{font-family:var(--font-mono);font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent-ink);}
+.cover-h1{font-family:var(--font-display);font-size:clamp(78px,13vw,190px);font-weight:500;letter-spacing:-0.03em;line-height:0.9;color:var(--ink);}
+.cover-line{font-size:clamp(22px,2.9vw,34px);font-weight:400;line-height:1.34;color:var(--ink-2);
+  max-width:760px;margin-top:30px;text-wrap:balance;letter-spacing:-0.01em;}
+.cover-line b{color:var(--ink);font-weight:500;font-family:var(--font-display);font-style:italic;}
+.cover-photo{position:relative;flex:1 1 auto;min-height:320px;width:100%;border-top:1px solid var(--hairline);
+  background:url(assets/hero-botanical.png) 50% 40%/cover no-repeat;}
+.cover-foot{position:absolute;left:0;right:0;bottom:0;padding:46px 40px 30px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  background:linear-gradient(to top, rgba(28,22,14,.42), rgba(28,22,14,0));}
+.cover-foot-in{max-width:var(--maxw);margin:0 auto;width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;}
 .cover-scored{display:flex;align-items:baseline;gap:10px;}
-.cover-scored b{font-family:var(--font-mono);font-size:15px;font-weight:600;}
-.cover-scored span{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.cover-scored b{font-family:var(--font-mono);font-size:16px;font-weight:600;color:#fff;}
+.cover-scored span{font-family:var(--font-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,.78);}
 .scrollcue{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:10px;
-  letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);}
-.scrollcue i{width:1px;height:26px;background:var(--ink-3);position:relative;overflow:hidden;display:block;}
-.scrollcue i::after{content:"";position:absolute;inset:0;background:var(--accent);animation:cue 2.2s infinite;}
+  letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,.8);}
+.scrollcue i{width:1px;height:26px;background:rgba(255,255,255,.5);position:relative;overflow:hidden;display:block;}
+.scrollcue i::after{content:"";position:absolute;inset:0;background:#fff;animation:cue 2.2s infinite;}
 @keyframes cue{0%{transform:translateY(-100%);}55%,100%{transform:translateY(100%);}}
+@media (max-width:680px){.cover-h1{font-size:clamp(60px,18vw,90px);}.cover-photo{min-height:260px;}}
 
 /* ───────── the frame (who/why/what/learn) ───────── */
 .frame-head{display:flex;flex-direction:column;gap:14px;margin-bottom:48px;max-width:680px;}
@@ -365,6 +370,70 @@ h1,h2,h3,p{margin:0;}
 .close-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);margin-top:42px;letter-spacing:0.03em;
   padding-top:22px;border-top:1px solid var(--hairline);display:flex;gap:10px;align-items:center;}
 
+/* ───────── botanical-luxe layer ───────── */
+.frame-title,.dos-name,.cover-h1,.close-loop{font-family:var(--font-display);}
+.frame-title{font-weight:500;letter-spacing:-0.02em;}
+.dos-name{font-weight:600;letter-spacing:-0.022em;}
+
+/* section theming — method = botanical green, output = apothecary blue */
+#method.section--tint{background:var(--green-tint);}
+#method{--accent:var(--green);--accent-ink:var(--green-ink);--accent-tint:#e9eee1;}
+#says.section--tint{background:var(--blue-tint);}
+#says{--accent:var(--blue);--accent-ink:var(--blue-ink);--accent-tint:#e5eef2;}
+
+/* the drafted notes read as elegant serif quotes */
+.msg-text{font-family:var(--font-display);font-style:italic;font-size:20.5px;line-height:1.5;letter-spacing:-0.003em;}
+
+/* finding — botanical figure beside the headline number (breaks the symmetry) */
+.finding-top{align-items:stretch;}
+.finding-fig{position:relative;flex:0 0 300px;max-width:44%;border-radius:14px;overflow:hidden;margin:0;
+  border:1px solid var(--hairline);box-shadow:var(--shadow);min-height:236px;
+  background:url(assets/hero-botanical.png) 73% 48%/cover no-repeat;}
+.finding-fig figcaption{position:absolute;left:0;right:0;bottom:0;padding:38px 16px 13px;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.09em;text-transform:uppercase;color:#fff;
+  background:linear-gradient(to top,rgba(28,22,14,.62),transparent);}
+@media(max-width:760px){.finding-fig{display:none;}}
+
+/* method — neuron feature image beside the thesis */
+.method-intro{display:grid;grid-template-columns:308px 1fr;gap:48px;align-items:center;margin-bottom:50px;}
+.method-intro .frame-head{margin-bottom:0;}
+image-slot.method-fig{display:block;width:100%;height:308px;box-shadow:var(--shadow);}
+@media(max-width:760px){.method-intro{grid-template-columns:1fr;gap:28px;}image-slot.method-fig{height:220px;}}
+
+/* decision — single-column dossier + wide two-column "at a glance" */
+.detail{display:block;}
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hairline);
+  border:1px solid var(--hairline);border-radius:12px;overflow:hidden;margin-top:24px;box-shadow:var(--shadow-sm);}
+.gfact{background:var(--surface);padding:15px 22px;display:flex;flex-direction:column;gap:5px;}
+.gfact-k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;color:var(--ink-3);}
+.gfact-v{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+.gfact-v.accent{color:var(--accent-ink);}
+/* glance shares the header band with the subscriber identity (v1 placement) */
+.dos-head{display:flex;justify-content:space-between;align-items:flex-start;gap:46px;flex-wrap:wrap;}
+.dos-id{flex:1 1 250px;min-width:230px;}
+.dos-head .glance{flex:0 1 448px;margin-top:6px;align-self:flex-start;}
+.dos-head .gfact{padding:12px 18px;gap:4px;}
+.dos-head .gfact-v{font-size:15px;}
+@media(max-width:520px){.glance{grid-template-columns:1fr;}}
+
+/* roster — by-risk / by-reason toggle */
+.roster-tabs{display:flex;gap:4px;padding:5px;margin:3px 5px 4px;background:var(--bg-tint);border-radius:10px;}
+.roster-tab{flex:1;appearance:none;border:0;cursor:pointer;background:transparent;border-radius:7px;
+  font-family:var(--font-mono);font-size:9.5px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+  padding:7px 6px;color:var(--ink-3);transition:all .15s;}
+.roster-tab.on{background:var(--surface);color:var(--accent-ink);box-shadow:var(--shadow-sm);}
+.roster-tab:hover:not(.on){color:var(--ink-2);}
+.roster-cap{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;color:var(--ink-3);padding:3px 14px 10px;letter-spacing:0.02em;}
+
+/* close — a deep botanical band to end on */
+.close{max-width:none;margin:0;background:var(--green-ink);color:var(--paper);padding:120px 0 140px;}
+.close > *{max-width:var(--maxw);margin-left:auto;margin-right:auto;padding-left:40px;padding-right:40px;width:100%;}
+.close .eyebrow.muted{color:rgba(241,233,220,.6);}
+.close-loop em{color:var(--accent);font-style:normal;font-weight:500;}
+.close-loop .arrow{color:rgba(241,233,220,.4);}
+.close-sub{color:rgba(241,233,220,.8);}
+.close-meta{color:rgba(241,233,220,.62);border-top-color:rgba(241,233,220,.18);}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
 </style>
 </head>
@@ -373,8 +442,8 @@ h1,h2,h3,p{margin:0;}
 
 <template id="__bundler_thumbnail">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" fill="#eaf1fc"/>
-    <g fill="#2E6FDD">
+    <rect width="100" height="100" fill="#efe2cf"/>
+    <g fill="#a4682f">
       <circle cx="38" cy="34" r="4.4"/><circle cx="50" cy="34" r="4.4"/><circle cx="62" cy="34" r="4.4"/>
       <circle cx="38" cy="50" r="4.4"/><circle cx="50" cy="50" r="4.4"/><circle cx="62" cy="50" r="4.4"/>
       <circle cx="38" cy="66" r="4.4"/><circle cx="50" cy="66" r="4.4"/><circle cx="62" cy="66" r="4.4"/>
@@ -386,6 +455,7 @@ h1,h2,h3,p{margin:0;}
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
+<script src="image-slot.js"></script>
 <script type="text/babel" src="tweaks-panel.jsx"></script>
 <script type="text/babel" src="data.jsx"></script>
 <script type="text/babel" src="components.jsx"></script>
