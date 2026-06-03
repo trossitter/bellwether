@@ -45,13 +45,16 @@ PANEL2_TITLE = "Monthly Revenue at Risk by Churn Reason"
 PANEL_TITLE_SIZE = 11
 
 # Axis labels
-PANEL1_YLABEL      = "Subscribers  (log scale)"
+PANEL1_YLABEL      = "Subscribers  (thousands, log scale)"
 PANEL1_LOG_SCALE   = True   # log scale handles Price (17K) vs Involuntary (666) gap
-PANEL2_XLABEL      = "Expected monthly revenue at risk  ($79 x P(churn))"
+PANEL2_XLABEL      = "Estimated monthly revenue at risk  (thousands)"
 AXIS_LABEL_SIZE    = 10
 
 # Legend position: "inside" (old, overlaps bars) or "below" (recommended)
 LEGEND_POSITION = "below"
+
+# Footnote shown below the legend
+FOOTNOTE = "* Estimated as: monthly subscription (USD 79) x modelled probability of churn within 30 days. Figures rounded to nearest USD 100."
 
 # Bar width (0–1; wider = bars touch)
 BAR_WIDTH = 0.55
@@ -160,7 +163,9 @@ ax.bar(x, hi_vals,  BAR_WIDTH, bottom=low_vals + med_vals,     color=COLOR_HIGH,
 if PANEL1_LOG_SCALE:
     ax.set_yscale("log")
     ax.set_ylim(bottom=1)
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{int(v):,}"))
+    ax.yaxis.set_major_formatter(
+        plt.FuncFormatter(lambda v, _: f"{v/1000:.0f}K" if v >= 1000 else f"{int(v)}")
+    )
 
 for i, arch in enumerate(ARCH_ORDER):
     total = summary[arch]["total"]
@@ -192,12 +197,22 @@ rev_vals   = np.array([summary[a]["revenue_at_risk"] for a in ARCH_ORDER], dtype
 bar_colors = [ARCH_COLORS[a] for a in ARCH_ORDER]
 ax2.barh(x, rev_vals, BAR_WIDTH, color=bar_colors, alpha=0.88, edgecolor=COLOR_BG, linewidth=0.5)
 
+def _rev_label(v: float) -> str:
+    """Round to nearest $100, display as $XK or $X,X00."""
+    rounded = round(v / 100) * 100
+    if rounded >= 1000:
+        return f"~${rounded/1000:.1f}K"
+    return f"~${rounded:,.0f}"
+
 max_rev = rev_vals.max()
 for i, val in enumerate(rev_vals):
     if val > 200:
-        ax2.text(val + max_rev * 0.01, x[i], f"${val:,.0f}", va="center",
+        ax2.text(val + max_rev * 0.01, x[i], _rev_label(val), va="center",
                  fontsize=VALUE_LABEL_SIZE, color=COLOR_WHITE, fontweight="bold")
 
+ax2.xaxis.set_major_formatter(
+    plt.FuncFormatter(lambda v, _: f"${v/1000:.0f}K" if v >= 1000 else f"${int(v)}")
+)
 ax2.set_yticks(x)
 ax2.set_yticklabels([ARCH_LABELS[a] for a in ARCH_ORDER], color=COLOR_MUTED, fontsize=TICK_LABEL_SIZE)
 ax2.set_xlabel(PANEL2_XLABEL, color=COLOR_MUTED, fontsize=AXIS_LABEL_SIZE, labelpad=8)
@@ -219,7 +234,10 @@ if LEGEND_POSITION == "below":
                fontsize=LEGEND_SIZE, framealpha=0.15,
                facecolor=COLOR_PANEL, edgecolor=COLOR_GRID,
                labelcolor=COLOR_WHITE,
-               bbox_to_anchor=(0.5, 0.01))
+               bbox_to_anchor=(0.5, 0.07))
+
+fig.text(0.5, 0.01, FOOTNOTE, ha="center", va="bottom",
+         fontsize=7.5, color=COLOR_MUTED, style="italic")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # SAVE
