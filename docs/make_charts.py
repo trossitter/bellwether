@@ -242,14 +242,15 @@ def chart_3():
             end_label = f"  {ARCH_LABELS[arch]}  {final_val:.0f}%"
 
         ax.text(dates[-1], final_val, end_label,
-                ha="left", va="center", fontsize=8.5,
-                color=color, fontweight="600")
+                ha="left", va="bottom", fontsize=8.5,
+                color=color, fontweight="600", rotation=45,
+                rotation_mode="anchor")
 
     import matplotlib.dates as mdates
 
     # X-axis ends at last data point — no phantom future
     # Add just enough right padding for end labels to breathe
-    label_pad = (dates[-1] - dates[0]) * 0.22
+    label_pad = (dates[-1] - dates[0]) * 0.04
     ax.set_xlim(dates[0], dates[-1] + label_pad)
 
     # Tick marks every 6 months; labels show year only at Jan ticks
