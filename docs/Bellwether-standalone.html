@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bellwether — Retention Intelligence for Thesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* warm botanical-apothecary palette — blush paper, bone surfaces, warm ink */
+  --paper:     #f1e9dc;
+  --paper-2:   #e9dfce;
+  --bg:        #f1e9dc;
+  --bg-tint:   #e8ddca;
+  --surface:   #fbf6ec;
+  --surface-2: #ffffff;
+  --ink:       #221c13;
+  --ink-2:     #5e5546;
+  --ink-3:     #948975;
+  --hairline:  #d8ccb6;
+  --hairline-2:#e3d8c4;
+  /* ginger — the primary brand/interactive accent (amber jar + root) */
+  --accent:    #a4682f;
+  --accent-ink:#7c4d22;
+  --accent-tint:#eedfc8;
+  /* botanical green + apothecary blue — the other two expected hues */
+  --green:     #4f6147;
+  --green-ink: #3a4a34;
+  --green-tint:#dfe5d6;
+  --blue:      #3c6377;
+  --blue-ink:  #2b4b5b;
+  --blue-tint: #dbe5ea;
+  /* risk-tier semantics — warmed, the gauge the user liked */
+  --terracotta:oklch(0.555 0.138 32);   /* high */
+  --gold:      oklch(0.66 0.102 66);     /* elevated */
+  --sage:      oklch(0.53 0.055 150);    /* watch */
+  --font-display:'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-ui:   'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --shadow:    0 4px 22px rgba(60,42,18,0.10);
+  --shadow-sm: 0 1px 3px rgba(60,42,18,0.07);
+  --maxw:      1080px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-ui);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--accent-tint);}
+.mono{font-family:var(--font-mono);}
+h1,h2,h3,p{margin:0;}
+
+/* ───────── top bar ───────── */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;background:color-mix(in srgb,var(--bg) 82%, transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid transparent;transition:border-color .3s, background .3s;}
+.topbar.solid{border-bottom-color:var(--hairline);}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-mark{display:flex;}
+.tb-name{font-weight:600;font-size:16px;letter-spacing:-0.01em;}
+.tb-sep{color:var(--ink-3);font-weight:400;margin:0 1px;}
+.tb-for{font-size:14px;color:var(--ink-2);font-weight:450;}
+.tb-stats{display:flex;align-items:center;gap:22px;}
+.tb-stat{display:flex;align-items:baseline;gap:7px;}
+.tb-stat b{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+.tb-stat span{font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.11em;text-transform:uppercase;color:var(--ink-3);}
+.tb-cycle{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.02em;}
+@media (max-width:720px){.tb-stats{display:none;}}
+
+/* ───────── section dot nav ───────── */
+.dotnav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:14px;}
+.dotnav button{appearance:none;border:0;background:transparent;cursor:pointer;
+  display:flex;align-items:center;gap:10px;padding:0;color:var(--ink-3);}
+.dotnav .dot{width:8px;height:8px;border-radius:50%;background:var(--hairline);
+  box-shadow:inset 0 0 0 1px var(--hairline-2);transition:all .25s;}
+.dotnav button[data-on="1"] .dot{background:var(--accent);box-shadow:0 0 0 4px var(--accent-tint);}
+.dotnav .dot-label{font-family:var(--font-mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
+  opacity:0;transform:translateX(4px);transition:all .2s;white-space:nowrap;}
+.dotnav button:hover .dot-label,.dotnav button[data-on="1"] .dot-label{opacity:1;transform:none;}
+.dotnav button[data-on="1"]{color:var(--ink);}
+@media (max-width:900px){.dotnav{display:none;}}
+
+/* ───────── section scaffold ───────── */
+.section{max-width:var(--maxw);margin:0 auto;padding:128px 40px;scroll-margin-top:58px;}
+.section--tint{max-width:none;background:var(--bg-tint);
+  border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);}
+.section--tint > .inner{max-width:var(--maxw);margin:0 auto;padding:128px 40px;}
+.eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--accent-ink);}
+.eyebrow.muted{color:var(--ink-3);}
+
+/* reveal — transform-only entrance; opacity stays 1 so content is never hidden
+   if animation is paused (inactive tab), printed, or exported. */
+.reveal{opacity:1;}
+@media (prefers-reduced-motion:no-preference){
+  .reveal.in{animation:revealIn .6s cubic-bezier(.2,.7,.2,1) both;}
+  .reveal.in[data-d="1"]{animation-delay:.06s;} .reveal.in[data-d="2"]{animation-delay:.12s;}
+  .reveal.in[data-d="3"]{animation-delay:.18s;} .reveal.in[data-d="4"]{animation-delay:.24s;}
+}
+@keyframes revealIn{from{transform:translateY(16px);}to{transform:none;}}
+
+/* ───────── cover ───────── */
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  max-width:var(--maxw);margin:0 auto;padding:120px 40px 80px;position:relative;}
+.cover-mark{display:flex;align-items:center;gap:11px;margin-bottom:40px;}
+.cover-mark .cm-name{font-family:var(--font-mono);font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-2);}
+.cover-h1{font-size:clamp(68px,11vw,152px);font-weight:600;letter-spacing:-0.04em;line-height:0.92;color:var(--ink);}
+.cover-line{font-size:clamp(20px,2.4vw,27px);font-weight:450;line-height:1.4;color:var(--ink-2);
+  max-width:620px;margin-top:30px;text-wrap:balance;}
+.cover-line b{color:var(--ink);font-weight:600;}
+.cover-foot{position:absolute;left:40px;right:40px;bottom:42px;display:flex;align-items:flex-end;
+  justify-content:space-between;gap:24px;}
+.cover-scored{display:flex;align-items:baseline;gap:10px;}
+.cover-scored b{font-family:var(--font-mono);font-size:15px;font-weight:600;}
+.cover-scored span{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.scrollcue{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);}
+.scrollcue i{width:1px;height:26px;background:var(--ink-3);position:relative;overflow:hidden;display:block;}
+.scrollcue i::after{content:"";position:absolute;inset:0;background:var(--accent);animation:cue 2.2s infinite;}
+@keyframes cue{0%{transform:translateY(-100%);}55%,100%{transform:translateY(100%);}}
+
+/* ───────── the frame (who/why/what/learn) ───────── */
+.frame-head{display:flex;flex-direction:column;gap:14px;margin-bottom:48px;max-width:680px;}
+.frame-title{font-size:clamp(28px,3.4vw,40px);font-weight:600;letter-spacing:-0.022em;line-height:1.08;text-wrap:balance;}
+.frame-sub{font-size:17px;color:var(--ink-2);line-height:1.5;}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hairline);
+  border:1px solid var(--hairline);border-radius:10px;overflow:hidden;}
+.pillar{background:var(--surface);padding:26px 24px 30px;display:flex;flex-direction:column;gap:12px;min-height:188px;}
+.pillar-n{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--accent);}
+.pillar-q{font-size:21px;font-weight:600;letter-spacing:-0.01em;}
+.pillar-d{font-size:13.5px;color:var(--ink-2);line-height:1.5;margin-top:2px;}
+@media (max-width:860px){.pillars{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:520px){.pillars{grid-template-columns:1fr;} }
+
+/* ───────── finding ───────── */
+.finding-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:36px;margin:28px 0 56px;}
+.pull{display:flex;flex-direction:column;gap:8px;}
+.pull-num{font-family:var(--font-mono);font-weight:500;font-size:clamp(72px,12vw,148px);line-height:0.86;
+  letter-spacing:-0.04em;color:var(--ink);}
+.pull-num em{font-style:normal;color:var(--terracotta);}
+.pull-label{font-size:19px;color:var(--ink-2);font-weight:450;}
+.pull-label b{color:var(--ink);font-weight:600;}
+.pull-side{font-family:var(--font-mono);font-size:13px;color:var(--ink-3);line-height:1.7;max-width:230px;text-align:right;}
+.pull-side b{color:var(--ink-2);font-weight:600;}
+
+/* archetype table */
+.atable{width:100%;border-collapse:collapse;}
+.atable thead th{font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink-3);text-align:left;padding:0 14px 12px;border-bottom:1px solid var(--hairline);}
+.atable thead th.num{text-align:right;}
+.atable tbody td{padding:17px 14px;border-bottom:1px solid var(--hairline-2);vertical-align:middle;}
+.atable tbody tr:last-child td{border-bottom:0;}
+.at-name{font-size:16.5px;font-weight:600;letter-spacing:-0.01em;color:var(--ink);}
+.at-blurb{font-size:13px;color:var(--ink-3);margin-top:3px;line-height:1.4;}
+.at-num{font-family:var(--font-mono);font-size:15px;color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums;}
+.at-risk{display:flex;align-items:center;justify-content:flex-end;gap:14px;}
+.at-bar{width:96px;height:6px;border-radius:99px;background:var(--hairline);overflow:hidden;flex:0 0 auto;}
+.at-bar i{display:block;height:100%;border-radius:99px;}
+.at-risk-v{font-family:var(--font-mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;min-width:84px;text-align:right;}
+.at-risk-v small{font-weight:500;color:var(--ink-3);margin-left:5px;}
+.atable tbody tr.hot .at-name{}
+.at-flag{display:inline-block;font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--terracotta);border:1px solid color-mix(in srgb,var(--terracotta) 35%, var(--hairline));
+  border-radius:3px;padding:1px 5px;margin-left:9px;vertical-align:middle;}
+@media (max-width:680px){.at-blurb{display:none;}.at-bar{display:none;}}
+
+/* ───────── decision dashboard (roster + detail + floating rep card) ───────── */
+.section--wide{max-width:1248px;}
+.dec-head{display:flex;flex-direction:column;gap:14px;margin-bottom:34px;max-width:720px;}
+.deckmain{display:grid;grid-template-columns:284px 1fr;gap:28px;align-items:start;}
+@media (max-width:980px){.deckmain{grid-template-columns:1fr;}}
+
+/* roster — the "top 5 of 41 flagged" list */
+.roster{position:sticky;top:78px;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:12px;padding:7px;box-shadow:var(--shadow-sm);}
+@media (max-width:980px){.roster{position:static;}}
+.roster-head{font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink-3);padding:12px 13px 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.roster-foot{font-family:var(--font-mono);font-size:10px;letter-spacing:0.04em;color:var(--ink-3);
+  padding:11px 13px 8px;border-top:1px solid var(--hairline-2);margin-top:5px;}
+.roster-foot b{color:var(--ink-2);font-weight:600;}
+.row{display:flex;align-items:center;gap:11px;width:100%;text-align:left;border:0;cursor:pointer;
+  background:transparent;padding:12px 13px;border-radius:8px;font:inherit;color:inherit;position:relative;transition:background .15s;}
+.row:hover{background:var(--bg-tint);}
+.row-on{background:var(--bg-tint);box-shadow:inset 0 0 0 1px var(--hairline);}
+.row-on::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:99px;background:var(--accent);}
+.row-avatar{flex:0 0 34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;
+  background:var(--bg-tint);border:1px solid var(--hairline);font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--ink-2);}
+.row-on .row-avatar{background:var(--surface);}
+.row-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.row-name{font-size:14.5px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.row-sku{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.row-meta{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+.row-score{font-family:var(--font-mono);font-size:15px;font-weight:600;}
+.row-pip{width:7px;height:7px;border-radius:50%;}
+
+/* detail: dossier main + floating rep card */
+.detail{display:grid;grid-template-columns:1fr 250px;gap:30px;align-items:start;}
+@media (max-width:760px){.detail{grid-template-columns:1fr;}}
+.detail-main{min-width:0;}
+.dos-arch{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
+.dos-arch .tag{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--accent-ink);background:var(--accent-tint);border-radius:4px;padding:4px 9px;}
+.dos-name{font-size:30px;font-weight:600;letter-spacing:-0.025em;line-height:1.05;}
+.dos-loc{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-3);margin-top:8px;letter-spacing:0.02em;}
+.dos-headline{font-size:18px;line-height:1.5;color:var(--ink-2);margin-top:18px;max-width:600px;text-wrap:pretty;}
+
+/* rep card — the floating glance the user loves (Product/Cadence/Tenure/LTV/Next renewal) */
+.repcard{position:sticky;top:78px;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+@media (max-width:760px){.repcard{position:static;}}
+.rep-hd{padding:13px 15px;border-bottom:1px solid var(--hairline-2);display:flex;align-items:center;gap:10px;background:var(--bg-tint);}
+.rep-avatar2{width:30px;height:30px;border-radius:50%;background:var(--surface);border:1px solid var(--hairline);
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--ink-2);flex:0 0 auto;}
+.rep-hd b{font-size:9.5px;font-family:var(--font-mono);letter-spacing:0.11em;text-transform:uppercase;color:var(--ink-3);font-weight:500;white-space:nowrap;}
+.rep-list{padding:4px 15px 12px;}
+.rep-row{display:flex;flex-direction:column;gap:3px;padding:12px 0;border-bottom:1px solid var(--hairline-2);}
+.rep-row:last-child{border-bottom:0;}
+.rep-k{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.rep-v{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+.rep-v.accent{color:var(--accent-ink);}
+
+/* blocks within dossier */
+.block{padding:30px 0;border-top:1px solid var(--hairline);margin-top:30px;}
+.block:first-of-type{border-top:0;padding-top:26px;margin-top:24px;}
+.b-eyebrow{display:flex;align-items:center;gap:11px;margin-bottom:22px;}
+.b-eyebrow .n{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 32%, var(--hairline));border-radius:4px;padding:2px 7px;}
+.b-eyebrow .t{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.13em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap;}
+
+/* risk row + gauge (PRESERVED viz) */
+.risk-row{display:flex;align-items:center;gap:40px;flex-wrap:wrap;}
+.gauge{position:relative;flex:0 0 auto;}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.gauge-num{font-family:var(--font-mono);font-size:44px;font-weight:600;line-height:1;letter-spacing:-0.03em;}
+.gauge-tier{font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;}
+.risk-side{display:flex;flex-direction:column;gap:14px;flex:1;min-width:210px;}
+.delta{font-family:var(--font-mono);font-size:12.5px;font-weight:500;white-space:nowrap;}
+.delta-up{color:var(--terracotta);} .delta-down{color:var(--sage);} .delta-flat{color:var(--ink-3);}
+.risk-scale{display:flex;flex-direction:column;gap:7px;}
+.risk-scale span{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-2);white-space:nowrap;}
+.risk-scale i{width:9px;height:9px;border-radius:2px;}
+.proj-note{font-size:13px;color:var(--ink-2);padding-top:10px;border-top:1px dashed var(--hairline);}
+.proj-note b{font-family:var(--font-mono);color:var(--sage);font-size:15px;font-weight:600;}
+
+/* riskbar variant */
+.riskbar{display:flex;align-items:center;gap:16px;width:360px;max-width:100%;}
+.riskbar-num{font-family:var(--font-mono);font-size:40px;font-weight:600;line-height:1;min-width:66px;letter-spacing:-0.02em;}
+.riskbar-track{position:relative;flex:1;height:12px;background:var(--hairline);border-radius:99px;}
+.riskbar-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.2,.7,.2,1),background .4s;}
+.riskbar-ghost{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.45;}
+.riskbar-tier{font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;}
+
+/* factors */
+.factors{display:flex;flex-direction:column;gap:16px;}
+.factor-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:7px;}
+.factor-label{font-size:14.5px;color:var(--ink);font-weight:500;}
+.factor-weight{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--ink-2);}
+.factor-weight.protective{color:var(--sage);}
+.factor-track{height:4px;background:var(--hairline);border-radius:99px;overflow:hidden;}
+.factor-fill{height:100%;border-radius:99px;}
+.factor-note{font-size:12.5px;color:var(--ink-3);margin-top:6px;}
+.factors-key{font-family:var(--font-mono);font-size:10.5px;letter-spacing:0.05em;color:var(--ink-3);margin-top:18px;}
+
+/* action */
+.action{background:var(--bg-tint);border:1px solid var(--hairline);border-radius:12px;padding:24px 26px;}
+.action-decided{background:var(--surface);box-shadow:inset 0 0 0 1px var(--accent);}
+.action-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;}
+.action-kind{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--hairline);border-radius:4px;padding:4px 9px;white-space:nowrap;background:var(--surface);}
+.action-state{font-family:var(--font-mono);font-size:11px;font-weight:500;white-space:nowrap;}
+.action-state.on{color:var(--sage);} .action-state.held{color:var(--ink-3);}
+.action-title{font-size:21px;font-weight:600;line-height:1.25;letter-spacing:-0.015em;margin-bottom:11px;}
+.action-detail{font-size:14.5px;color:var(--ink-2);line-height:1.55;margin-bottom:16px;max-width:620px;}
+.action-why{font-size:13.5px;color:var(--ink-2);line-height:1.55;background:var(--accent-tint);
+  border-left:2.5px solid var(--accent);padding:13px 16px;border-radius:0 6px 6px 0;max-width:620px;}
+.why-tag{display:block;font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:0.13em;text-transform:uppercase;
+  color:var(--accent-ink);margin-bottom:5px;}
+.action-feet{display:flex;gap:46px;margin-top:18px;padding-top:16px;border-top:1px solid var(--hairline);}
+.feet-k{font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.feet-v{font-size:13px;font-weight:500;color:var(--ink);margin-top:4px;}
+.action-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px;}
+.btn{font:inherit;font-size:13.5px;font-weight:500;border-radius:8px;padding:11px 20px;cursor:pointer;
+  border:1px solid transparent;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-ink);}
+.btn-ghost{background:transparent;border-color:var(--hairline);color:var(--ink-2);}
+.btn-ghost:hover{border-color:var(--ink-3);color:var(--ink);}
+.btn-undo{background:transparent;border-color:var(--hairline);color:var(--ink-3);font-size:12.5px;padding:9px 16px;}
+.btn-undo:hover{color:var(--ink);border-color:var(--ink-3);}
+.alts{display:flex;align-items:center;gap:11px;margin-left:4px;flex-wrap:wrap;}
+.alts-label{font-family:var(--font-mono);font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.alt{font-size:12.5px;color:var(--ink-2);border-bottom:1px dashed var(--hairline);padding-bottom:1px;}
+
+/* measure */
+.measure{background:var(--surface);border:1px solid var(--hairline);border-radius:12px;padding:24px 26px;}
+.measure-live{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sage) 40%, transparent);}
+.m-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding-bottom:20px;border-bottom:1px solid var(--hairline-2);}
+.mstat-k{font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.09em;text-transform:uppercase;color:var(--ink-3);margin-bottom:9px;}
+.mstat-v{font-family:var(--font-mono);font-size:25px;font-weight:600;line-height:1;letter-spacing:-0.02em;}
+.mstat-v.accent{color:var(--sage);}
+.mstat-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-3);margin-top:7px;}
+.m-rows{display:flex;flex-direction:column;padding-top:8px;}
+.m-line{display:flex;gap:18px;padding:11px 0;border-bottom:1px solid var(--hairline-2);}
+.m-line:last-child{border-bottom:0;}
+.m-k{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-3);flex:0 0 84px;padding-top:1px;}
+.m-v{font-size:13.5px;color:var(--ink);}
+.m-active{display:flex;align-items:flex-start;gap:10px;margin-top:18px;font-family:var(--font-mono);font-size:11.5px;line-height:1.5;
+  color:var(--ink-2);background:color-mix(in srgb,var(--sage) 10%, transparent);padding:11px 14px;border-radius:7px;}
+.m-active.held{background:var(--bg-tint);color:var(--ink-3);}
+.m-dot{width:7px;height:7px;border-radius:50%;background:var(--sage);margin-top:4px;flex:0 0 auto;
+  box-shadow:0 0 0 0 color-mix(in srgb,var(--sage) 60%,transparent);animation:pulse 2s infinite;}
+.m-active.held .m-dot{background:var(--ink-3);animation:none;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--sage) 50%,transparent);}70%{box-shadow:0 0 0 7px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+
+/* ───────── messages ───────── */
+.msg-head{display:flex;flex-direction:column;gap:14px;margin-bottom:46px;max-width:680px;}
+.msg-grid{display:flex;flex-direction:column;gap:20px;}
+.msgcard{display:grid;grid-template-columns:200px 1fr;gap:0;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);}
+@media (max-width:760px){.msgcard{grid-template-columns:1fr;}}
+.msg-meta{padding:24px 24px;background:var(--bg-tint);border-right:1px solid var(--hairline);display:flex;flex-direction:column;gap:14px;}
+@media (max-width:760px){.msg-meta{border-right:0;border-bottom:1px solid var(--hairline);flex-direction:row;flex-wrap:wrap;gap:18px;align-items:center;}}
+.msg-arch{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:0.09em;text-transform:uppercase;color:var(--accent-ink);}
+.msg-chips{display:flex;flex-direction:column;gap:8px;}
+@media (max-width:760px){.msg-chips{flex-direction:row;flex-wrap:wrap;gap:8px 16px;}}
+.msg-chip{display:flex;flex-direction:column;gap:2px;}
+.msg-chip .k{font-family:var(--font-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.msg-chip .v{font-size:13.5px;font-weight:600;color:var(--ink);letter-spacing:-0.01em;}
+.msg-chip .v.risk{font-family:var(--font-mono);}
+.msg-body{padding:26px 28px;display:flex;flex-direction:column;justify-content:space-between;gap:20px;}
+.msg-text{font-size:17px;line-height:1.62;color:var(--ink);text-wrap:pretty;}
+.msg-text::before{content:"\201C";color:var(--ink-3);}
+.msg-text::after{content:"\201D";color:var(--ink-3);}
+.msg-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;border-top:1px solid var(--hairline-2);}
+.judge{display:flex;align-items:center;gap:11px;}
+.judge-label{font-family:var(--font-mono);font-size:9.5px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);}
+.judge-dots{display:flex;gap:3px;}
+.judge-dots i{width:7px;height:7px;border-radius:50%;background:var(--hairline);}
+.judge-dots i.on{background:var(--accent);}
+.judge-dots i.half{background:linear-gradient(90deg,var(--accent) 50%,var(--hairline) 50%);}
+.judge-score{font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--ink);white-space:nowrap;}
+.judge-score span{color:var(--ink-3);font-weight:500;}
+.msg-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:0.06em;color:var(--ink-3);}
+
+/* ───────── close ───────── */
+.close{max-width:var(--maxw);margin:0 auto;padding:120px 40px 150px;text-align:left;}
+.close-loop{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:clamp(26px,3.6vw,44px);
+  font-weight:600;letter-spacing:-0.025em;line-height:1.1;}
+.close-loop em{font-style:normal;color:var(--accent);}
+.close-loop .arrow{color:var(--ink-3);font-weight:400;}
+.close-sub{font-size:17px;color:var(--ink-2);margin-top:26px;max-width:560px;line-height:1.55;}
+.close-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);margin-top:42px;letter-spacing:0.03em;
+  padding-top:22px;border-top:1px solid var(--hairline);display:flex;gap:10px;align-items:center;}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <rect width="100" height="100" fill="#eaf1fc"/>
+    <g fill="#2E6FDD">
+      <circle cx="38" cy="34" r="4.4"/><circle cx="50" cy="34" r="4.4"/><circle cx="62" cy="34" r="4.4"/>
+      <circle cx="38" cy="50" r="4.4"/><circle cx="50" cy="50" r="4.4"/><circle cx="62" cy="50" r="4.4"/>
+      <circle cx="38" cy="66" r="4.4"/><circle cx="50" cy="66" r="4.4"/><circle cx="62" cy="66" r="4.4"/>
+    </g>
+  </svg>
+</template>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+// @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
+
+/* BEGIN USAGE */
+// tweaks-panel.jsx
+// Reusable Tweaks shell + form-control helpers.
+// Exports (to window): useTweaks, TweaksPanel, TweakSection, TweakRow, TweakSlider,
+//   TweakToggle, TweakRadio, TweakSelect, TweakText, TweakNumber, TweakColor, TweakButton.
+//
+// Owns the host protocol (listens for __activate_edit_mode / __deactivate_edit_mode,
+// posts __edit_mode_available / __edit_mode_set_keys / __edit_mode_dismissed) so
+// individual prototypes don't re-roll it. Ships a consistent set of controls so you
+// don't hand-draw <input type="range">, segmented radios, steppers, etc.
+//
+// Usage (in an HTML file that loads React + Babel):
+//
+//   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+//     "primaryColor": "#D97757",
+//     "palette": ["#D97757", "#29261b", "#f6f4ef"],
+//     "fontSize": 16,
+//     "density": "regular",
+//     "dark": false
+//   }/*EDITMODE-END*/;
+//
+//   function App() {
+//     const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+//     return (
+//       <div style={{ fontSize: t.fontSize, color: t.primaryColor }}>
+//         Hello
+//         <TweaksPanel>
+//           <TweakSection label="Typography" />
+//           <TweakSlider label="Font size" value={t.fontSize} min={10} max={32} unit="px"
+//                        onChange={(v) => setTweak('fontSize', v)} />
+//           <TweakRadio  label="Density" value={t.density}
+//                        options={['compact', 'regular', 'comfy']}
+//                        onChange={(v) => setTweak('density', v)} />
+//           <TweakSection label="Theme" />
+//           <TweakColor  label="Primary" value={t.primaryColor}
+//                        options={['#D97757', '#2A6FDB', '#1F8A5B', '#7A5AE0']}
+//                        onChange={(v) => setTweak('primaryColor', v)} />
+//           <TweakColor  label="Palette" value={t.palette}
+//                        options={[['#D97757', '#29261b', '#f6f4ef'],
+//                                  ['#475569', '#0f172a', '#f1f5f9']]}
+//                        onChange={(v) => setTweak('palette', v)} />
+//           <TweakToggle label="Dark mode" value={t.dark}
+//                        onChange={(v) => setTweak('dark', v)} />
+//         </TweaksPanel>
+//       </div>
+//     );
+//   }
+//
+// TweakRadio is the segmented control for 2–3 short options (auto-falls-back to
+// TweakSelect past ~16/~10 chars per label); reach for TweakSelect directly when
+// options are many or long. For color tweaks always curate 3-4 options rather than
+// a free picker; an option can also be a whole 2–5 color palette (the stored value
+// is the array). The Tweak* controls are a floor, not a ceiling — build custom
+// controls inside the panel if a tweak calls for UI they don't cover.
+/* END USAGE */
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),
+    0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+// ── useTweaks ───────────────────────────────────────────────────────────────
+// Single source of truth for tweak values. setTweak persists via the host
+// (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
+  // useState-style call doesn't write a "[object Object]" key into the persisted
+  // JSON block.
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    // Same-window signal so in-page listeners (deck-stage rail thumbnails)
+    // can react — the parent message only reaches the host, not peers.
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+// ── TweaksPanel ─────────────────────────────────────────────────────────────
+// Floating shell. Registers the protocol listener BEFORE announcing
+// availability — if the announce ran first, the host's activate could land
+// before our handler exists and the toolbar toggle would silently no-op.
+// The close button posts __edit_mode_dismissed so the host's toolbar toggle
+// flips off in lockstep; the host echoes __deactivate_edit_mode back which
+// is what actually hides the panel.
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-omelette-chrome=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">
+          {children}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Layout helpers ──────────────────────────────────────────────────────────
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  // The active value is read by pointer-move handlers attached for the lifetime
+  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  // Segments wrap mid-word once per-segment width runs out. The track is
+  // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
+  // back to a dropdown rather than wrap.
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    // <select> emits strings — map back to the original option value so the
+    // fallback stays type-preserving (numbers, booleans) like the segment path.
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// read on both #111 and #fafafa without per-option configuration. Hex input
+// only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+// TweakColor — curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
+// rest stacked in a sharp column on the right. onChange emits the
+// option in the shape it was passed (string stays string, array stays array).
+// Without options it falls back to the native color input for back-compat.
+function TweakColor({ label, value, options, onChange }) {
+  if (!options || !options.length) {
+    return (
+      <div className="twk-row twk-row-h">
+        <div className="twk-lbl"><span>{label}</span></div>
+        <input type="color" className="twk-swatch" value={value}
+               onChange={(e) => onChange(e.target.value)} />
+      </div>
+    );
+  }
+  // Native <input type=color> emits lowercase hex per the HTML spec, so
+  // compare case-insensitively. String() guards JSON.stringify(undefined),
+  // which returns the primitive undefined (no .toLowerCase).
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    aria-label={colors.join(', ')} title={colors.join(' · ')}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {sup.length > 0 && (
+                <span>
+                  {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
+                </span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+
+</script>
+<script type="text/babel">
+// data.jsx — Bellwether for Thesis. Population finding + five flagged subscribers.
+// Exported to window for the other babel scripts.
+
+const FLEET = {
+  scored: 26584,           // active Thesis subscribers scored this cycle
+  atRisk: 2247,            // flagged at risk this month
+  reviewQueue: 41,         // escalated to a human rep for review this cycle
+  showingTop: 5,
+  pricePoint: 79,          // $/mo subscription
+  cycleLabel: "Cycle 26 · June 2026",
+  modelNote: "Scored nightly · gradient-boosted survival model + LLM message drafting",
+};
+
+// The population finding — one row per behavioral archetype Bellwether separates.
+// rate = share of that archetype currently flagged at risk.
+const ARCHETYPES = [
+  { key: "price",     name: "Price",                 members: 17300, atRisk: 860, rate: 5,
+    blurb: "Comparing cost after a plan or renewal email." },
+  { key: "life",      name: "Life Change",           members: 6728,  atRisk: 638, rate: 9,
+    blurb: "A move, a new baby, a busy stretch — life, not the product." },
+  { key: "efficacy",  name: "Expectation Gap", members: 870,   atRisk: 190, rate: 22,
+    blurb: "In the 4–6 month window, unsure it's working yet." },
+  { key: "overstock", name: "Product Overstock",     members: 1009,  atRisk: 56,  rate: 6,
+    blurb: "Taking it less often than it ships — bottles stacking up." },
+  { key: "payment",   name: "Payment Declined",      members: 666,   atRisk: 503, rate: 76,
+    blurb: "An expired or failed card, not a decision to leave." },
+];
+
+// risk tiers (treat score as churn-risk %). base rate ≈ 8.5%, so an elevated
+// band starts well below 50. high (clay) ≥60, elevated (amber) 30–59, watch (sage) <30.
+function tierOf(score) {
+  if (score >= 60) return "high";
+  if (score >= 30) return "elevated";
+  return "watch";
+}
+
+const SUBSCRIBERS = [
+  {
+    id: "marguerite",
+    archetype: "Payment Declined",
+    archetypeKey: "payment",
+    name: "Marguerite Vance",
+    initials: "MV",
+    location: "Marin County, CA",
+    formula: "Clarity (Caffeine-Free)",
+    formulaShort: "Clarity · CF",
+    cadence: "Monthly · 28-day",
+    tenureMonths: 14,
+    tenureLabel: "14 months",
+    ltv: 1106,
+    nextRenewal: "Jun 12",
+    score: 82,
+    prevScore: 39,
+    headline:
+      "A 14-month subscriber one failed charge from silent churn — the card lapsed, not her intent.",
+    factors: [
+      { label: "Card declined ×2 (expired)", weight: 38, note: "Visa ·04 expired Jun 1" },
+      { label: "Dunning emails unopened", weight: 16, note: "2 retries, no response" },
+      { label: "14-month loyalty cohort", weight: 7, note: "Baseline cohort risk" },
+      { label: "Usage stayed healthy", weight: -14, note: "Logged 22 of 30 days" },
+    ],
+    action: {
+      kind: "Payment recovery",
+      title: "One-tap card update — no offer, no friction",
+      detail:
+        "Send the pre-filled update link by SMS and email; hold the shipment five days instead of cancelling. No discount — she never chose to leave.",
+      why:
+        "This is involuntary churn. A win-back coupon would teach good customers to let cards lapse. The fix is removing 30 seconds of friction, not lowering the price.",
+      effort: "Low touch · automated",
+      cost: "$0 incentive",
+    },
+    alternatives: ["Pause one cycle, retry next month", "CX call if no update in 5 days"],
+    measure: {
+      liftPts: 54, ci: 8, holdoutPct: 10, checkBack: "Jun 19",
+      success: "Card updated, shipment resumes on schedule",
+      baseline: "Untreated declines recover at 18%",
+    },
+    message:
+      "Your Clarity shipment is ready to go — we just need a quick payment update to keep it on its way. Takes about 30 seconds. No changes to your formula or cadence unless you want them.",
+    judge: 4.6,
+  },
+  {
+    id: "theo",
+    archetype: "Life Change",
+    archetypeKey: "life",
+    name: "Theo Lindqvist",
+    initials: "TL",
+    location: "Seattle, WA",
+    formula: "Clarity + Motivation",
+    formulaShort: "Clarity + Motivation",
+    cadence: "Monthly · 28-day",
+    tenureMonths: 24,
+    tenureLabel: "2 years",
+    ltv: 1896,
+    nextRenewal: "Jun 22",
+    score: 34,
+    prevScore: 18,
+    headline:
+      "Two years in, usage fell off a cliff and a support note mentions a newborn — life got loud, not disappointing.",
+    factors: [
+      { label: "Daily logging ↓ 70% (4 wk)", weight: 20, note: "From ~20 days to 6" },
+      { label: "Support note: “slammed lately”", weight: 14, note: "Mentioned a new baby" },
+      { label: "Opened pause-policy FAQ", weight: 9, note: "Looking for an exit ramp" },
+      { label: "24 months, zero prior skips", weight: -17, note: "Deep loyalty signal" },
+    ],
+    action: {
+      kind: "Pause offer",
+      title: "Offer up to 3 months paused — formulas stay on file",
+      detail:
+        "Acknowledge the season of life directly and make pausing one tap. Keep his exact stack saved so resuming is effortless when things settle.",
+      why:
+        "He doesn't need a discount; he needs room. Forcing the renewal turns a loyal subscriber into a hard cancel. A pause keeps the relationship and pre-commits the return.",
+      effort: "Low touch · one-tap",
+      cost: "Deferred revenue, not lost",
+    },
+    alternatives: ["Switch to 60-day cadence", "CX check-in note, no offer"],
+    measure: {
+      liftPts: 23, ci: 7, holdoutPct: 10, checkBack: "Sep 22",
+      success: "Schedules a pause and a resume date",
+      baseline: "Untreated life-change churns at 41%",
+    },
+    message:
+      "You've been with Thesis for over two years — that's not nothing. If life's gotten busier, you can pause for up to 3 months and pick back up whenever you're ready. Your formulas stay on file.",
+    judge: 4.4,
+  },
+  {
+    id: "priya",
+    archetype: "Expectation Gap",
+    archetypeKey: "efficacy",
+    name: "Priya Anand",
+    initials: "PA",
+    location: "Brooklyn, NY",
+    formula: "Confidence + Logic",
+    formulaShort: "Confidence + Logic",
+    cadence: "Monthly · 28-day",
+    tenureMonths: 6,
+    tenureLabel: "6 months",
+    ltv: 474,
+    nextRenewal: "Jun 16",
+    score: 28,
+    prevScore: 26,
+    headline:
+      "A newer subscriber at the expectation gap — results take longer than she thinks, and she's in the 4–6 month window where belief wavers.",
+    factors: [
+      { label: "Assessment never completed", weight: 18, note: "Skipped at onboarding" },
+      { label: "Read “how long until” FAQ ×3", weight: 13, note: "Seeking reassurance" },
+      { label: "6-month cohort cliff", weight: 10, note: "Highest-churn month" },
+      { label: "Still opens every email", weight: -8, note: "Engaged, wants to believe" },
+    ],
+    action: {
+      kind: "Education + assessment",
+      title: "Surface the assessment and the 4–6 month efficacy note",
+      detail:
+        "Reframe “nothing dramatic yet” as “right on schedule.” Invite the 5-minute assessment, which usually surfaces a timing or stacking tweak worth staying for.",
+      why:
+        "Her churn is an information gap, not dissatisfaction. Education is cheaper and far more durable than a discount, and it builds the belief that carries her past month six.",
+      effort: "Low touch · automated",
+      cost: "$0",
+    },
+    alternatives: ["Pair with a coaching call", "Offer formula re-match"],
+    measure: {
+      liftPts: 19, ci: 6, holdoutPct: 10, checkBack: "Jul 16",
+      success: "Completes assessment, renews Jun 16",
+      baseline: "Untreated efficacy-gap churns at 34%",
+    },
+    message:
+      "Most people who stick with Confidence + Logic notice the shift around months 4–6 — you're right in that window. If you haven't done the full assessment yet, it usually surfaces something useful about timing.",
+    judge: 4.1,
+  },
+  {
+    id: "marcus",
+    archetype: "Price",
+    archetypeKey: "price",
+    name: "Marcus Bell",
+    initials: "MB",
+    location: "Columbus, OH",
+    formula: "Energy + Clarity",
+    formulaShort: "Energy + Clarity",
+    cadence: "Monthly · 28-day",
+    tenureMonths: 9,
+    tenureLabel: "9 months",
+    ltv: 711,
+    nextRenewal: "Jun 14",
+    score: 47,
+    prevScore: 44,
+    headline:
+      "Results are landing — but he's reaching for the exits, price-checking hard after the renewal email hit his inbox.",
+    factors: [
+      { label: "Visited pricing page ×4", weight: 19, note: "After renewal email" },
+      { label: "Coupon-site referral last login", weight: 17, note: "Active price shopping" },
+      { label: "Opens steady, clicks ↓", weight: 6, note: "Engaged but hesitant" },
+      { label: "On-time reorders ×8", weight: -12, note: "Strong habit signal" },
+    ],
+    action: {
+      kind: "Plan reframe",
+      title: "Show cost-per-day and the rate-lock annual plan — no blanket coupon",
+      detail:
+        "Reframe $79/mo as about $2.63/day and surface the annual plan that locks today's price. Lead with the value he's already getting, not a discount.",
+      why:
+        "Price-sensitive isn't unwilling to pay. A coupon resets his anchor permanently; a per-day reframe plus an annual rate-lock protects both margin and lifetime value.",
+      effort: "Low touch · automated",
+      cost: "Annual plan, no discount",
+    },
+    alternatives: ["10% loyalty credit at 12 months", "Downgrade to a single formula"],
+    measure: {
+      liftPts: 21, ci: 7, holdoutPct: 10, checkBack: "Jul 14",
+      success: "Renews monthly or moves to annual",
+      baseline: "Untreated price-shoppers churn at 27%",
+    },
+    message:
+      "You've been running Energy + Clarity for nine months — long enough to know it works for you. If you'd rather lock today's pricing, the annual plan holds your rate and comes out to about $2.63 a day. Same formulas, same cadence.",
+    judge: 4.2,
+  },
+  {
+    id: "anita",
+    archetype: "Product Overstock",
+    archetypeKey: "overstock",
+    name: "Anita Cho",
+    initials: "AC",
+    location: "San Jose, CA",
+    formula: "Logic",
+    formulaShort: "Logic",
+    cadence: "Monthly · 28-day",
+    tenureMonths: 11,
+    tenureLabel: "11 months",
+    ltv: 869,
+    nextRenewal: "Jun 20",
+    score: 39,
+    prevScore: 31,
+    headline:
+      "Taking Logic about 4×/week, so monthly shipments are stacking up — surplus, not dissatisfaction.",
+    factors: [
+      { label: "Usage 4×/wk vs daily ship", weight: 18, note: "Self-reported in-app" },
+      { label: "~2 unopened bottles (est.)", weight: 15, note: "Next ship would be 3rd" },
+      { label: "Approaching reorder date", weight: 8, note: "Surplus before charge" },
+      { label: "NPS still 8 / 10", weight: -9, note: "Likes it — just too much" },
+    ],
+    action: {
+      kind: "Cadence adjustment",
+      title: "Stretch to every 6 weeks to match real usage",
+      detail:
+        "Proactively offer a 45-day interval sized to how she actually takes Logic. Right-sizes spend before the pile-up itself becomes the reason she cancels.",
+      why:
+        "Overstock churn is a fit problem, not a value problem. Slowing delivery counterintuitively protects lifetime value versus losing her to a closet full of bottles.",
+      effort: "Low touch · one-tap",
+      cost: "Protects $79/mo",
+    },
+    alternatives: ["Skip next shipment only", "Switch to 90-count value size"],
+    measure: {
+      liftPts: 22, ci: 7, holdoutPct: 10, checkBack: "Aug 04",
+      success: "Accepts 6-week cadence, keeps the plan",
+      baseline: "Untreated overstock churns at 29%",
+    },
+    message:
+      "Looks like Logic is lasting you longer than a month — no need to pay for bottles you're not getting to. Want to switch to every 6 weeks? It lines up with how you're actually taking it, and you can change it back anytime.",
+    judge: 4.0,
+  },
+];
+
+window.BELLWETHER = { FLEET, ARCHETYPES, SUBSCRIBERS, tierOf };
+
+</script>
+<script type="text/babel">
+// components.jsx — presentational pieces for Bellwether (Thesis). Exported to window.
+const { useState, useEffect, useRef } = React;
+
+// ---- brand six-dot mark (the glyph on the Thesis jar label) ------------
+function DotMark({ size = 18, color = "currentColor" }) {
+  const r = size * 0.085;
+  const cols = [size * 0.34, size * 0.5, size * 0.66];
+  const rows = [size * 0.28, size * 0.5, size * 0.72];
+  const dots = [];
+  cols.forEach((cx) => rows.forEach((cy) => dots.push([cx, cy])));
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+      {dots.map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r={r} fill={color} />
+      ))}
+    </svg>
+  );
+}
+
+// ---- reveal-on-scroll wrapper (scroll/viewport check — robust, no IO quirks) ----
+function Reveal({ children, as = "div", delay = 0, className = "", ...rest }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    if (shown) return;
+    const el = ref.current;
+    if (!el) return;
+    const check = () => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      if (r.top < vh * 0.92 && r.bottom > 0) { setShown(true); return true; }
+      return false;
+    };
+    if (check()) return;
+    const onScroll = () => { if (check()) cleanup(); };
+    const cleanup = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return cleanup;
+  }, [shown]);
+  const Tag = as;
+  return (
+    <Tag ref={ref} className={`reveal ${shown ? "in" : ""} ${className}`} data-d={delay || undefined} {...rest}>
+      {children}
+    </Tag>
+  );
+}
+
+// ---- angle helpers (0deg = top, clockwise) ----------------------------
+function polar(cx, cy, r, deg) {
+  const rad = (deg * Math.PI) / 180;
+  return [cx + r * Math.sin(rad), cy - r * Math.cos(rad)];
+}
+function arcPath(cx, cy, r, startDeg, endDeg) {
+  const [x1, y1] = polar(cx, cy, r, startDeg);
+  const [x2, y2] = polar(cx, cy, r, endDeg);
+  const large = endDeg - startDeg > 180 ? 1 : 0;
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`;
+}
+
+// ---- tween hook --------------------------------------------------------
+function useTween(target, ms = 900) {
+  const [val, setVal] = useState(target);
+  const from = useRef(target);
+  const raf = useRef(0);
+  useEffect(() => {
+    const start = performance.now();
+    const a = from.current;
+    const b = target;
+    if (a === b) return;
+    cancelAnimationFrame(raf.current);
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / ms);
+      const e = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      setVal(a + (b - a) * e);
+      if (p < 1) raf.current = requestAnimationFrame(tick);
+      else from.current = b;
+    };
+    raf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf.current);
+  }, [target, ms]);
+  return val;
+}
+
+const TIER = {
+  high:     { color: "var(--terracotta)", label: "High risk" },
+  elevated: { color: "var(--gold)",       label: "Elevated" },
+  watch:    { color: "var(--sage)",       label: "Watch" },
+};
+
+// ---- radial risk gauge (270° sweep) — PRESERVED, the user likes this ---
+function RiskGauge({ score, projected = null, size = 168, stroke = 11, showProjected = false, variant = "gauge" }) {
+  const target = showProjected && projected != null ? projected : score;
+  const v = useTween(target, 950);
+  const display = Math.round(v);
+  const tier = window.BELLWETHER.tierOf(display);
+  const color = TIER[tier].color;
+
+  if (variant === "bar") {
+    const tierNow = window.BELLWETHER.tierOf(display);
+    return (
+      <div className="riskbar">
+        <div className="riskbar-num" style={{ color: TIER[tierNow].color }}>{display}</div>
+        <div className="riskbar-track">
+          <div className="riskbar-fill" style={{ width: `${display}%`, background: TIER[tierNow].color }} />
+          {showProjected && projected != null && (
+            <div className="riskbar-ghost" style={{ left: `${projected}%` }} />
+          )}
+        </div>
+        <div className="riskbar-tier" style={{ color: TIER[tierNow].color }}>{TIER[tierNow].label}</div>
+      </div>
+    );
+  }
+
+  const cx = size / 2, cy = size / 2, r = (size - stroke) / 2 - 2;
+  const START = -135, SWEEP = 270;
+  const end = START + (display / 100) * SWEEP;
+  const projEnd = projected != null ? START + (projected / 100) * SWEEP : null;
+  return (
+    <div className="gauge" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <path d={arcPath(cx, cy, r, START, START + SWEEP)} fill="none"
+          style={{ stroke: "var(--hairline)" }} strokeWidth={stroke} strokeLinecap="round" />
+        {showProjected && projEnd != null && projEnd < end && (
+          <path d={arcPath(cx, cy, r, projEnd, end)} fill="none"
+            style={{ stroke: "var(--ink-3)", opacity: 0.35 }} strokeWidth={stroke}
+            strokeLinecap="round" strokeDasharray="1 7" />
+        )}
+        {display > 0 && (
+          <path d={arcPath(cx, cy, r, START, end)} fill="none"
+            style={{ stroke: color, transition: "stroke .5s ease" }} strokeWidth={stroke} strokeLinecap="round" />
+        )}
+      </svg>
+      <div className="gauge-center">
+        <div className="gauge-num" style={{ color }}>{display}</div>
+        <div className="gauge-tier" style={{ color }}>{TIER[tier].label}</div>
+      </div>
+    </div>
+  );
+}
+
+// ---- delta chip (trend vs last cycle) ---------------------------------
+function Delta({ now, prev }) {
+  const d = now - prev;
+  if (d === 0) return <span className="delta delta-flat">— no change vs. last cycle</span>;
+  const up = d > 0;
+  return (
+    <span className={`delta ${up ? "delta-up" : "delta-down"}`}>
+      {up ? "▲" : "▼"} {Math.abs(d)} pts vs. last cycle
+    </span>
+  );
+}
+
+// ---- factor bar (positive = risk-driver, negative = protective) -------
+function FactorBar({ label, weight, note, max }) {
+  const protective = weight < 0;
+  const pct = Math.min(100, (Math.abs(weight) / max) * 100);
+  return (
+    <div className="factor">
+      <div className="factor-head">
+        <span className="factor-label">{label}</span>
+        <span className={`factor-weight ${protective ? "protective" : ""}`}>
+          {protective ? "−" : "+"}{Math.abs(weight)}
+        </span>
+      </div>
+      <div className="factor-track">
+        <div className="factor-fill" style={{
+          width: `${pct}%`,
+          background: protective ? "var(--sage)" : "var(--accent)",
+          opacity: protective ? 0.85 : Math.max(0.34, pct / 100),
+        }} />
+      </div>
+      {note && <div className="factor-note">{note}</div>}
+    </div>
+  );
+}
+
+// ---- judge score (LLM-as-judge rating of the drafted message) ---------
+function JudgeDots({ score, max = 5 }) {
+  const dots = [];
+  for (let i = 1; i <= max; i++) {
+    const cls = score >= i ? "on" : score >= i - 0.5 ? "half" : "";
+    dots.push(<i key={i} className={cls} />);
+  }
+  return (
+    <div className="judge">
+      <span className="judge-label">Judge</span>
+      <span className="judge-dots">{dots}</span>
+      <span className="judge-score">{score.toFixed(1)}<span> / {max.toFixed(1)}</span></span>
+    </div>
+  );
+}
+
+Object.assign(window, { DotMark, Reveal, RiskGauge, Delta, FactorBar, JudgeDots, TIER });
+
+</script>
+<script type="text/babel">
+// sections.jsx — Bellwether scroll presentation sections. Exported to window.
+const { useState: useStateS, useMemo: useMemoS } = React;
+
+function projectedRisk(s) {
+  return Math.max(8, Math.round(s.score - s.measure.liftPts * 0.92));
+}
+function fmt(n) {return n.toLocaleString("en-US");}
+
+// ───────────────────────── Cover ─────────────────────────
+function Cover({ fleet }) {
+  return (
+    <section id="cover" className="cover" data-screen-label="Cover">
+      <Reveal className="cover-mark">
+        <DotMark size={22} color="var(--accent)" />
+        <span className="cm-name">Subscriber retention intelligence · built for Thesis</span>
+      </Reveal>
+      <Reveal as="h1" className="cover-h1" delay={1}>Bellwether</Reveal>
+      <Reveal as="p" className="cover-line" delay={2}>
+        They chose Thesis because they own their mind.<br />
+        <b>Know when that mind is starting to drift.</b>
+      </Reveal>
+      <div className="cover-foot">
+        <Reveal className="cover-scored" delay={3}>
+          <b>{fmt(fleet.scored)}</b>
+          <span>subscribers scored · {fleet.cycleLabel}</span>
+        </Reveal>
+        <div className="scrollcue"><span>The finding</span><i /></div>
+      </div>
+    </section>);
+}
+
+// ───────────────────────── The Finding ─────────────────────────
+function FindingSection({ fleet, archetypes }) {
+  const maxRate = Math.max(...archetypes.map((a) => a.rate));
+  return (
+    <section id="finding" className="section" data-screen-label="The Finding">
+      <Reveal as="div" className="eyebrow">01 · The finding</Reveal>
+      <div className="finding-top">
+        <Reveal className="pull" delay={1}>
+          <div className="pull-num"><em>{fmt(fleet.atRisk)}</em></div>
+          <div className="pull-label"><b>subscribers at risk</b> this month</div>
+        </Reveal>
+        <Reveal className="pull-side" delay={2}>
+          across <b>{fmt(fleet.scored)}</b> active Thesis<br />subscribers scored this cycle
+        </Reveal>
+      </div>
+
+      <Reveal delay={2}>
+        <table className="atable">
+          <thead>
+            <tr>
+              <th>Archetype</th>
+              <th className="num">Members</th>
+              <th className="num">At risk</th>
+            </tr>
+          </thead>
+          <tbody>
+            {archetypes.map((a) => {
+              const hot = a.rate >= 20;
+              const tone = a.rate >= 50 ? "var(--terracotta)" : a.rate >= 20 ? "var(--gold)" : "var(--accent)";
+              return (
+                <tr key={a.key} className={hot ? "hot" : ""}>
+                  <td>
+                    <div className="at-name">{a.name}{a.rate >= 50 && <span className="at-flag">Acute</span>}</div>
+                    <div className="at-blurb">{a.blurb}</div>
+                  </td>
+                  <td className="at-num">{fmt(a.members)}</td>
+                  <td>
+                    <div className="at-risk">
+                      <span className="at-bar"><i style={{ width: `${a.rate / maxRate * 100}%`, background: tone }} /></span>
+                      <span className="at-risk-v" style={{ color: a.rate >= 20 ? tone : "var(--ink)" }}>
+                        {fmt(a.atRisk)}<small>{a.rate}%</small>
+                      </span>
+                    </div>
+                  </td>
+                </tr>);
+            })}
+          </tbody>
+        </table>
+      </Reveal>
+    </section>);
+}
+
+// ───────────────────────── Method (4 questions) ─────────────────────────
+const PILLARS = [
+  {
+    n: "01", q: "Who",
+    d: "26,584 subscribers scored each cycle. Behavioral signals — order cadence, billing timing, formula history, email engagement — produce a calibrated churn probability for every one. The top 41 are escalated for human review this cycle."
+  },
+  {
+    n: "02", q: "Why",
+    d: "Each score comes with an explanation: the signals driving it, how much each one contributes, and which behavioral archetype they map to. You're not approving a black-box recommendation. You're approving a reasoned one."
+  },
+  {
+    n: "03", q: "What",
+    d: "The archetype determines the action. A payment decline gets a frictionless card-update link — not a win-back coupon. Price anxiety gets a cost-per-day reframe. Overstock gets a cadence adjustment. The right fix for the actual cause."
+  },
+  {
+    n: "04", q: "Learn",
+    d: "Every approved action creates a natural experiment: 10% held back as a control, a read-out date set. The model's next training run sees real labeled outcomes. Each cycle, the system gets incrementally sharper."
+  }
+];
+
+function MethodSection() {
+  return (
+    <section id="method" className="section--tint" data-screen-label="Method">
+      <div className="inner">
+        <Reveal className="frame-head">
+          <span className="eyebrow">02 · The method</span>
+          <h2 className="frame-title">A decision system, not a dashboard.</h2>
+          <p className="frame-sub">For each at-risk subscriber, Bellwether answers four questions — and closes the loop on whether the answer worked.</p>
+        </Reveal>
+        <Reveal delay={1}>
+          <div className="pillars">
+            {PILLARS.map((p) =>
+              <div className="pillar" key={p.n}>
+                <span className="pillar-n">{p.n}</span>
+                <span className="pillar-q">{p.q}</span>
+                <span className="pillar-d">{p.d}</span>
+              </div>
+            )}
+          </div>
+        </Reveal>
+      </div>
+    </section>);
+}
+
+// ───────────────────────── Decision dashboard ─────────────────────────
+function DecisionSection({ fleet, subscribers, tierOf, gaugeStyle }) {
+  const ranked = useMemoS(() => [...subscribers].sort((a, b) => b.score - a.score), [subscribers]);
+  const [selectedId, setSelectedId] = useStateS(ranked[0].id);
+  const [status, setStatus] = useStateS({});
+  const sub = subscribers.find((s) => s.id === selectedId);
+  const st = status[selectedId];
+  const maxWeight = Math.max(...sub.factors.map((f) => Math.abs(f.weight)));
+  const decide = (kind) => setStatus((p) => ({ ...p, [selectedId]: kind }));
+  const undo = () => setStatus((p) => {const n = { ...p };delete n[selectedId];return n;});
+
+  return (
+    <section id="review" className="section section--wide" data-screen-label="Review queue">
+      <Reveal className="dec-head">
+        <span className="eyebrow">03 · The review queue</span>
+        <h2 className="frame-title">Who is at risk, why, what to do, and how we'll know it worked.</h2>
+        <p className="frame-sub">Of {fmt(fleet.atRisk)} at-risk, {fleet.reviewQueue} are escalated for human review this cycle. Here are the top five — pick one to see the full picture.</p>
+      </Reveal>
+
+      <div className="deckmain">
+        {/* roster */}
+        <aside className="roster">
+          <div className="roster-head"><span>Roster · ranked by risk</span></div>
+          {ranked.map((s) => {
+            const tier = tierOf(s.score);
+            return (
+              <button key={s.id} className={`row ${s.id === selectedId ? "row-on" : ""}`} onClick={() => setSelectedId(s.id)}>
+                <span className="row-avatar">{s.initials}</span>
+                <span className="row-body">
+                  <span className="row-name">{s.name}</span>
+                  <span className="row-sku">{s.archetype}</span>
+                </span>
+                <span className="row-meta">
+                  <span className="row-score" style={{ color: TIER[tier].color }}>{s.score}</span>
+                  <span className="row-pip" style={{ background: TIER[tier].color }} />
+                </span>
+              </button>);
+          })}
+          <div className="roster-foot">Showing top <b>5</b> of <b>{fleet.reviewQueue}</b> flagged for review</div>
+        </aside>
+
+        {/* detail */}
+        <div className="detail" key={selectedId}>
+          <div className="detail-main">
+            <div className="dos-arch"><span className="tag">{sub.archetype}</span></div>
+            <h3 className="dos-name">{sub.name}</h3>
+            <div className="dos-loc">{sub.location}</div>
+            <p className="dos-headline">{sub.headline}</p>
+
+            {/* 01 who / how risky */}
+            <div className="block">
+              <div className="b-eyebrow"><span className="n">01</span><span className="t">Who & how risky</span></div>
+              <div className="risk-row">
+                <RiskGauge score={sub.score} projected={projectedRisk(sub)} showProjected={st === "approved"} variant={gaugeStyle} />
+                <div className="risk-side">
+                  <Delta now={sub.score} prev={sub.prevScore} />
+                  <div className="risk-scale">
+                    <span><i style={{ background: "var(--terracotta)" }} />High ≥ 60</span>
+                    <span><i style={{ background: "var(--gold)" }} />Elevated 30–59</span>
+                    <span><i style={{ background: "var(--sage)" }} />Watch &lt; 30</span>
+                  </div>
+                  {st === "approved" &&
+                    <div className="proj-note">Projected after action: <b>{projectedRisk(sub)}</b>
+                      <span> ({TIER[tierOf(projectedRisk(sub))].label.toLowerCase()})</span></div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            {/* 02 why */}
+            <div className="block">
+              <div className="b-eyebrow"><span className="n">02</span><span className="t">Why it's happening</span></div>
+              <div className="factors">
+                {sub.factors.map((f, i) => <FactorBar key={i} {...f} max={maxWeight} />)}
+              </div>
+              <div className="factors-key">+ adds to risk · − protective signal</div>
+            </div>
+
+            {/* 03 action */}
+            <div className="block">
+              <div className="b-eyebrow"><span className="n">03</span><span className="t">Recommended action</span></div>
+              <div className={`action ${st ? "action-decided" : ""}`}>
+                <div className="action-top">
+                  <span className="action-kind">{sub.action.kind}</span>
+                  {st === "approved" && <span className="action-state on">✓ Scheduled</span>}
+                  {st === "held" && <span className="action-state held">○ Holding · monitoring</span>}
+                </div>
+                <h4 className="action-title">{sub.action.title}</h4>
+                <p className="action-detail">{sub.action.detail}</p>
+                <div className="action-why"><span className="why-tag">Why this, not a discount</span>{sub.action.why}</div>
+                <div className="action-feet">
+                  <div><div className="feet-k">Effort</div><div className="feet-v">{sub.action.effort}</div></div>
+                  <div><div className="feet-k">Cost</div><div className="feet-v">{sub.action.cost}</div></div>
+                </div>
+                {!st ?
+                  <div className="action-cta">
+                    <button className="btn btn-primary" onClick={() => decide("approved")}>Approve action</button>
+                    <button className="btn btn-ghost" onClick={() => decide("held")}>Hold &amp; watch</button>
+                    <div className="alts">
+                      <span className="alts-label">Alternatives</span>
+                      {sub.alternatives.map((a, i) => <span key={i} className="alt">{a}</span>)}
+                    </div>
+                  </div> :
+                  <div className="action-cta">
+                    <button className="btn btn-undo" onClick={undo}>↺ Undo decision</button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            {/* 04 measure */}
+            <div className="block">
+              <div className="b-eyebrow"><span className="n">04</span><span className="t">How we'll know it worked</span></div>
+              <div className={`measure ${st === "approved" ? "measure-live" : ""}`}>
+                <div className="m-grid">
+                  <div><div className="mstat-k">Expected risk drop</div><div className="mstat-v accent">−{sub.measure.liftPts} pts</div><div className="mstat-sub">±{sub.measure.ci} (90% CI)</div></div>
+                  <div><div className="mstat-k">Holdout (control)</div><div className="mstat-v">{sub.measure.holdoutPct ? `${sub.measure.holdoutPct}%` : "—"}</div><div className="mstat-sub">{sub.measure.holdoutPct ? "matched cohort" : "monitor only"}</div></div>
+                  <div><div className="mstat-k">Read-out date</div><div className="mstat-v">{sub.measure.checkBack}</div><div className="mstat-sub">auto check-in</div></div>
+                </div>
+                <div className="m-rows">
+                  <div className="m-line"><span className="m-k">Success</span><span className="m-v">{sub.measure.success}</span></div>
+                  <div className="m-line"><span className="m-k">Baseline</span><span className="m-v">{sub.measure.baseline}</span></div>
+                </div>
+                {st === "approved" &&
+                  <div className="m-active"><span className="m-dot" /> Experiment live · {100 - sub.measure.holdoutPct}% treated, {sub.measure.holdoutPct}% held back · reads out {sub.measure.checkBack}</div>
+                }
+                {st === "held" &&
+                  <div className="m-active held"><span className="m-dot" /> Monitoring only · no treatment applied · re-scores next cycle</div>
+                }
+              </div>
+            </div>
+          </div>
+
+          {/* floating rep glance card */}
+          <aside className="repcard">
+            <div className="rep-hd"><span className="rep-avatar2">{sub.initials}</span><b>At a glance</b></div>
+            <div className="rep-list">
+              <div className="rep-row"><span className="rep-k">Product</span><span className="rep-v">{sub.formula}</span></div>
+              <div className="rep-row"><span className="rep-k">Cadence</span><span className="rep-v">{sub.cadence}</span></div>
+              <div className="rep-row"><span className="rep-k">Tenure</span><span className="rep-v">{sub.tenureLabel}</span></div>
+              <div className="rep-row"><span className="rep-k">Lifetime value</span><span className="rep-v accent">${fmt(sub.ltv)}</span></div>
+              <div className="rep-row"><span className="rep-k">Next renewal</span><span className="rep-v">{sub.nextRenewal}</span></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>);
+}
+
+// ───────────────────────── Messages ─────────────────────────
+function MessagesSection({ subscribers, tierOf }) {
+  return (
+    <section id="says" className="section--tint" data-screen-label="What it says">
+      <div className="inner">
+        <Reveal className="msg-head">
+          <span className="eyebrow">04 · What it produces</span>
+          <h2 className="frame-title">The Bellwether notes</h2>
+          <p className="frame-sub">Each message is drafted from behavioral signals — then scored by an LLM judge before a human ever sees it. No templates. Personalized to the subscriber.</p>
+        </Reveal>
+        <div className="msg-grid">
+          {subscribers.map((s, i) => {
+            const tier = tierOf(s.score);
+            return (
+              <Reveal key={s.id} delay={Math.min(4, i + 1)}>
+                <div className="msgcard">
+                  <div className="msg-meta">
+                    <span className="msg-arch">{s.archetype}</span>
+                    <div className="msg-chips">
+                      <span className="msg-chip"><span className="k">Formula</span><span className="v">{s.formulaShort}</span></span>
+                      <span className="msg-chip"><span className="k">Tenure</span><span className="v">{s.tenureLabel}</span></span>
+                      <span className="msg-chip"><span className="k">Risk</span><span className="v risk" style={{ color: TIER[tier].color }}>{s.score}%</span></span>
+                    </div>
+                  </div>
+                  <div className="msg-body">
+                    <p className="msg-text">{s.message}</p>
+                    <div className="msg-foot">
+                      <JudgeDots score={s.judge} />
+                      <span className="msg-tag">draft · pending send</span>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>);
+          })}
+        </div>
+      </div>
+    </section>);
+}
+
+// ───────────────────────── Close ─────────────────────────
+function CloseSection({ fleet }) {
+  return (
+    <section id="close" className="close" data-screen-label="Close">
+      <Reveal as="div" className="eyebrow muted">The loop</Reveal>
+      <Reveal as="div" className="close-loop" delay={1} style={{ marginTop: 22 }}>
+        <em>Score</em><span className="arrow">→</span>
+        <em>Intervene</em><span className="arrow">→</span>
+        <em>Dispatch</em><span className="arrow">→</span>
+        <em>Learn</em>
+      </Reveal>
+      <Reveal as="p" className="close-sub" delay={2}>
+        Right now, dispatch is simulated. The only gap between this and live Klaviyo sends is swapping one adapter. When outcomes return — did they churn after the message? — they feed the next model cycle. The system gets sharper every run.
+      </Reveal>
+      <Reveal as="div" className="close-meta" delay={3}>
+        <DotMark size={14} color="var(--ink-3)" />
+        Bellwether · {fleet.cycleLabel} · {fleet.modelNote}
+      </Reveal>
+    </section>);
+}
+
+Object.assign(window, {
+  Cover, FindingSection, MethodSection, DecisionSection, MessagesSection, CloseSection, projectedRisk
+});
+
+</script>
+<script type="text/babel">
+// app.jsx — Bellwether (Thesis) shell: topbar, dot-nav, section composition, tweaks.
+const { useState, useEffect, useRef } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#2E6FDD",
+  "gaugeStyle": "gauge",
+  "tableDensity": "regular"
+}/*EDITMODE-END*/;
+
+const NAV = [
+  { id: "cover", label: "Top" },
+  { id: "finding", label: "Finding" },
+  { id: "method", label: "Method" },
+  { id: "review", label: "Review" },
+  { id: "says", label: "Output" },
+];
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const { FLEET, ARCHETYPES, SUBSCRIBERS, tierOf } = window.BELLWETHER;
+  const [active, setActive] = useState("cover");
+  const [solid, setSolid] = useState(false);
+
+  // topbar solid-on-scroll
+  useEffect(() => {
+    const onScroll = () => setSolid(window.scrollY > 36);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // active-section tracking for the dot nav (scroll-based — robust)
+  useEffect(() => {
+    const ids = NAV.map((n) => n.id).concat("close");
+    const pick = () => {
+      const mid = window.innerHeight * 0.42;
+      let current = "cover";
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= mid) current = id;
+      });
+      setActive(current === "close" ? "says" : current);
+    };
+    pick();
+    window.addEventListener("scroll", pick, { passive: true });
+    window.addEventListener("resize", pick);
+    return () => {
+      window.removeEventListener("scroll", pick);
+      window.removeEventListener("resize", pick);
+    };
+  }, []);
+
+  const jump = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - (id === "cover" ? 0 : 8);
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
+  const rootStyle = {
+    "--accent": t.accent,
+    "--accent-ink": `color-mix(in oklab, ${t.accent}, #000 26%)`,
+    "--accent-tint": `color-mix(in oklab, ${t.accent} 12%, #fff)`,
+  };
+
+  return (
+    <div style={rootStyle}>
+      {/* topbar */}
+      <header className={`topbar ${solid ? "solid" : ""}`}>
+        <div className="tb-brand">
+          <span className="tb-mark"><DotMark size={18} color="var(--accent)" /></span>
+          <span className="tb-name">Bellwether</span>
+          <span className="tb-sep">·</span>
+          <span className="tb-for">for Thesis</span>
+        </div>
+        <div className="tb-stats">
+          <span className="tb-stat"><b>{FLEET.scored.toLocaleString()}</b><span>scored</span></span>
+          <span className="tb-stat"><b>{FLEET.atRisk.toLocaleString()}</b><span>at risk</span></span>
+          <span className="tb-stat"><b>{FLEET.reviewQueue}</b><span>in review</span></span>
+          <span className="tb-cycle">{FLEET.cycleLabel}</span>
+        </div>
+      </header>
+
+      {/* dot nav */}
+      <nav className="dotnav" aria-label="Sections">
+        {NAV.map((n) => (
+          <button key={n.id} data-on={active === n.id ? "1" : "0"} onClick={() => jump(n.id)} aria-label={n.label}>
+            <span className="dot-label">{n.label}</span>
+            <span className="dot" />
+          </button>
+        ))}
+      </nav>
+
+      {/* sections */}
+      <main>
+        <Cover fleet={FLEET} />
+        <FindingSection fleet={FLEET} archetypes={ARCHETYPES} />
+        <MethodSection />
+        <DecisionSection fleet={FLEET} subscribers={SUBSCRIBERS} tierOf={tierOf} gaugeStyle={t.gaugeStyle} />
+        <MessagesSection subscribers={SUBSCRIBERS} tierOf={tierOf} />
+        <CloseSection fleet={FLEET} />
+      </main>
+
+      {/* tweaks */}
+      <TweaksPanel>
+        <TweakSection label="Brand" />
+        <TweakColor label="Accent" value={t.accent}
+          options={["#2E6FDD", "#1F7A5B", "#6A4BD6", "#0E2A55"]}
+          onChange={(v) => setTweak("accent", v)} />
+        <TweakSection label="Risk display" />
+        <TweakRadio label="Risk viz" value={t.gaugeStyle}
+          options={["gauge", "bar"]} onChange={(v) => setTweak("gaugeStyle", v)} />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+</body>
+</html>
