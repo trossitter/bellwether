@@ -78,13 +78,13 @@ ARCH_ORDER_TREND = ["price", "fatigue", "life_change", "involuntary", "efficacy"
 
 C1_TITLE     = "Subscribers at Risk by Churn Reason"
 C1_SUBTITLE  = "Active Thesis subscribers · risk tier by P(churn within 30 days)"
-C1_YLABEL    = "Subscribers (thousands)"
-C1_FOOTNOTE  = "Risk tiers: Low P < 0.10  |  Medium 0.10 to P < 0.50  |  High P >= 0.50"
+C1_YLABEL    = "Subscribers (log scale)"
+C1_FOOTNOTE  = "Low risk: P(churn) < 0.10   Medium risk: 0.10 to 0.50   High risk: > 0.50 (94 subscribers, all in Price — too few to show at scale)"
 C1_OUT       = Path(__file__).parent / "chart_1_subscribers.png"
 C1_FIG_SIZE  = (9, 5.5)
 BAR_W        = 0.55
 
-COLOR_LOW    = "#C8CDD8"   # neutral — not archetype-specific
+COLOR_LOW    = "#A8BFCF"   # warm slate blue — neutral, pleasant against amber
 COLOR_MEDIUM = "#F5A623"
 COLOR_HIGH   = "#C95F5F"
 
@@ -100,10 +100,10 @@ def chart_1():
     hi_vals  = np.array([summary[a]["high"]   for a in ARCH_ORDER_BAR], dtype=float) / 1000
     totals_k = low_vals + med_vals + hi_vals
 
-    # All bars same neutral base — only risk tier adds color
-    ax.bar(x, low_vals,            BAR_W, color=COLOR_LOW,    label="Low risk   (P < 0.10)",        zorder=3)
-    ax.bar(x, med_vals, BAR_W, bottom=low_vals,            color=COLOR_MEDIUM, label="Medium risk   (0.10–0.50)", zorder=3, alpha=0.92)
-    ax.bar(x, hi_vals,  BAR_W, bottom=low_vals + med_vals, color=COLOR_HIGH,   label="High risk   (P > 0.50)",   zorder=3, alpha=0.95)
+    # Low + medium only — high risk (94 subs, all Price) is invisible at log scale;
+    # noted in the footnote instead
+    ax.bar(x, low_vals,         BAR_W, color=COLOR_LOW,    zorder=3)
+    ax.bar(x, med_vals, BAR_W, bottom=low_vals, color=COLOR_MEDIUM, zorder=3, alpha=0.92)
 
     # Log scale: makes small archetypes readable alongside Price
     ax.set_yscale("log")
@@ -131,9 +131,7 @@ def chart_1():
     ax.set_xticklabels([ARCH_LABELS[a] for a in ARCH_ORDER_BAR], color=TEXT, fontsize=9)
     ax.set_ylabel(C1_YLABEL, color=TEXT_MUTED, fontsize=9, labelpad=8)
 
-    # Legend below the chart, clear of the bars
-    ax.legend(fontsize=8, frameon=False, labelcolor=TEXT,
-              loc="lower center", bbox_to_anchor=(0.5, -0.22), ncol=3)
+    # No legend — footnote carries the definitions
 
     ax.set_title(C1_TITLE,    color=TEXT,       fontsize=13, fontweight="bold", pad=14, loc="left")
     ax.set_xlabel(C1_SUBTITLE, color=TEXT_MUTED, fontsize=8.5, labelpad=10)
