@@ -3,11 +3,9 @@
 Subscription churn prediction & autonomous intervention for a DTC supplements
 partner running two product lines on a subscription model.
 
-A *bellwether* is the lead animal whose movement foretells the flock's — the name
-for a system whose job is to read leading indicators and act **before** a subscriber
-cancels, rather than trying to win them back after.
+A *bellwether* is the lead whose movement foretells the flock. Just like them, our system's job is to act **before** a subscriber cancels, rather than trying to win them back after.
 
-Bellwether shifts TakeThesis from reactive saves to proactive prediction and autonomous intervention. It identifies which subscribers are likely to cancel in the next 30–60 days, routes each one to the most relevant intervention archetype, and drafts a personalized outreach — without requiring a human in the loop for every decision.
+Bellwether shifts TakeThesis from reactive saves to proactive prediction and autonomous intervention. It reads leading indicators to identify which subscribers are likely to cancel in the next 30–60 days, routes each one to the most relevant intervention archetype, and drafts a personalized outreach — without requiring a human in the loop for every decision.
 
 The design philosophy is simple: machine learning handles the prediction, deterministic code handles the routing and guardrails, and the language model handles only the judgment calls it's genuinely suited for — which intervention fits this subscriber, and what to say.
 
@@ -29,7 +27,8 @@ An end-to-end pipeline, not a dashboard:
 
 ## Scope
 
-We scoped to Thesis subscribers (449,902 of 566,743 total) for three reasons. First, Thesis has THESIS_FORMULAS coverage and a richer formula-based feature set that doesn't exist for Stasis — pooling the two lines would force us to drop those features or introduce brand-interaction terms that obscure rather than clarify. Second, the churn semantics differ: Stasis includes a children's line (Stasis Kids) with parent-driven purchase decisions, a distinct stimulant-sensitivity profile, and different household economics — modeling it alongside adult cognitive supplement subscribers would suppress signal in both populations. Third, Thesis is the larger line (79% of the base) and the one with the most structured data signal. The expansion path to Stasis is a separate model trained on the same pipeline architecture, with brand-specific archetype taxonomy — not a pooled model with a BRAND flag.
+Though we received a data lake of all subscriberes, we intentionally scoped to Thesis subscribers (449,902 of 566,743 total) and excluded Stasis users for three reasons. First, Thesis has THESIS_FORMULAS coverage and a richer formula-based feature set that doesn't exist for Stasis — pooling the two lines would force us to drop those features or introduce terms that obscure rather than clarify. Second, the churn semantics differ: Stasis includes a children's line (Stasis Kids) with parent-driven purchase decisions, a distinct stimulant-sensitivity profile, and different household economics — modeling it alongside adult cognitive supplement subscribers would suppress signal in both populations. Third, Thesis is the larger line (79% of the base) and the one with the most structured data signal. The expansion path to Stasis is a separate model trained on the same pipeline architecture, with brand-specific archetype taxonomy — not a pooled model with a BRAND flag.
+Due to several distinct choices in the architecture, we believe that aspects such as the brand tone, the human in the loop, and the scope can be easily adjusted if a pivot is requested or required. 
 
 ## Design stance
 
