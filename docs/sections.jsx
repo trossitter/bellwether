@@ -187,23 +187,29 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
           </div>
           {ranked.map((s) => {
             const tier = tierOf(s.score);
+            const arch = prevalence[s.archetypeKey];
+            const urgencyPct = arch ? `${arch.rate}% at risk` : "";
             return (
               <button key={s.id} className={`row ${s.id === selectedId ? "row-on" : ""}`} onClick={() => setSelectedId(s.id)}>
                 <span className="row-avatar">{s.initials}</span>
                 <span className="row-body">
-                  <span className="row-name">{s.name}</span>
-                  <span className="row-sku">
-                    {sortMode === "reason"
-                      ? `${s.archetype} · ${fmt(prevalence[s.archetypeKey].atRisk)} at risk`
-                      : s.formula}
-                  </span>
+                  {sortMode === "reason" ? (
+                    <>
+                      <span className="row-name">{s.archetype}</span>
+                      <span className="row-sku">{s.name} · {urgencyPct} fleet-wide</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="row-name">{s.name}</span>
+                      <span className="row-sku">{s.formula}</span>
+                    </>
+                  )}
                 </span>
                 <span className="row-meta">
                   <span className="row-score" style={{ color: TIER[tier].color }}>{s.score}</span>
                   <span className="row-pip" style={{ background: TIER[tier].color }} />
                 </span>
               </button>);
-
           })}
           <div className="roster-foot">Showing top <b>5</b> of <b>{fleet.reviewQueue}</b> flagged for review</div>
         </aside>
@@ -268,26 +274,57 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
                   {st === "held" && <span className="action-state held">○ Holding · monitoring</span>}
                 </div>
                 <h4 className="action-title">{sub.action.title}</h4>
-                <p className="action-detail">{sub.action.detail}</p>
-                <div className="action-why"><span className="why-tag">Why this, not a discount</span>{sub.action.why}</div>
-                <div className="action-feet">
-                  <div><div className="feet-k">Effort</div><div className="feet-v">{sub.action.effort}</div></div>
-                  <div><div className="feet-k">Cost</div><div className="feet-v">{sub.action.cost}</div></div>
+
+                {/* The message — primary: this is what the rep is approving */}
+                <div style={{
+                  background:"var(--surface-2)",border:"1px solid var(--hairline)",
+                  borderRadius:"10px",padding:"20px 22px",margin:"16px 0",
+                  borderLeft:"3px solid var(--accent)"
+                }}>
+                  <div style={{fontSize:"13px",fontFamily:"var(--font-mono)",letterSpacing:"0.08em",
+                    textTransform:"uppercase",color:"var(--ink-3)",marginBottom:"10px"}}>
+                    Draft message
+                  </div>
+                  <p style={{fontSize:"16px",lineHeight:"1.65",color:"var(--ink)",margin:0,
+                    fontStyle:"italic"}}>
+                    "{sub.message}"
+                  </p>
+                  <div style={{marginTop:"14px",paddingTop:"12px",borderTop:"1px solid var(--hairline-2)",
+                    display:"flex",alignItems:"center",gap:"10px"}}>
+                    <JudgeDots score={sub.judge} />
+                  </div>
                 </div>
+
+                {/* Approve / hold — right after the message */}
                 {!st ?
-                <div className="action-cta">
-                    <button className="btn btn-primary" onClick={() => decide("approved")}>Approve action</button>
+                  <div className="action-cta">
+                    <button className="btn btn-primary" onClick={() => decide("approved")}>Approve &amp; schedule</button>
                     <button className="btn btn-ghost" onClick={() => decide("held")}>Hold &amp; watch</button>
                     <div className="alts">
                       <span className="alts-label">Alternatives</span>
                       {sub.alternatives.map((a, i) => <span key={i} className="alt">{a}</span>)}
                     </div>
                   </div> :
-
-                <div className="action-cta">
+                  <div className="action-cta">
                     <button className="btn btn-undo" onClick={undo}>↺ Undo decision</button>
                   </div>
                 }
+
+                {/* Reasoning — secondary, below the decision */}
+                <details style={{marginTop:"18px"}}>
+                  <summary style={{fontSize:"12px",fontFamily:"var(--font-mono)",letterSpacing:"0.08em",
+                    textTransform:"uppercase",color:"var(--ink-3)",cursor:"pointer",userSelect:"none"}}>
+                    Why this approach
+                  </summary>
+                  <div style={{marginTop:"12px"}}>
+                    <p className="action-detail">{sub.action.detail}</p>
+                    <div className="action-why"><span className="why-tag">Why this, not a discount</span>{sub.action.why}</div>
+                    <div className="action-feet">
+                      <div><div className="feet-k">Effort</div><div className="feet-v">{sub.action.effort}</div></div>
+                      <div><div className="feet-k">Cost</div><div className="feet-v">{sub.action.cost}</div></div>
+                    </div>
+                  </div>
+                </details>
               </div>
             </div>
 
