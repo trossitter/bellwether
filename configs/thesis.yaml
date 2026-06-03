@@ -1,0 +1,48 @@
+# Thesis brand configuration for the Bellwether intervention judge.
+#
+# Update this file when Thesis updates its brand voice.
+# No model retraining required — the judge picks this up at runtime.
+
+brand: thesis
+
+audience: >
+  Self-optimisers — biohackers, productivity-focused adults who chose Thesis
+  because of its evidence-based positioning. They did their research. They expect
+  to be spoken to as informed adults, not as generic wellness consumers.
+
+brand_context: >
+  Thesis is a data-driven nootropics brand. Campaign positioning: "find your
+  brain's best formula." Evidence base: 7.3 million data points from customers,
+  a 5-part formulation process. The brand describes itself as a "cognitive
+  conditioner that'll actually work" — the emphasis is on certainty and
+  performance, not hope or aspiration.
+
+tone:
+  descriptor: "confident, precise, performance-oriented"
+  score_5: >
+    Confident, precise, performance-oriented. Treats the subscriber as a
+    self-optimiser who made a deliberate, informed choice. Sounds like the brand
+    earned their trust with data and specificity — not with warmth or reassurance.
+  score_3: >
+    Acceptable but generic, or slightly off-register for a science-forward brand.
+    Would not embarrass Thesis but does not reflect its voice.
+  score_1: >
+    Pushy, alarming, or soft wellness language ("hope you're feeling well",
+    "take care of yourself") that treats the subscriber as a passive consumer
+    rather than a deliberate self-optimiser.
+
+# Tags from Thesis's own brand materials — useful reference for tone calibration.
+brand_tags:
+  - Nootropics
+  - Biohacking
+  - Neuroscience
+  - Cognitive Science
+  - Brain Performance
+  - Cognitive Enhancement
+  - Focus
+  - Energy
+  - Productivity
+  - Bioinformatics
+
+# Hypothesis label shown on calibration charts.
+hypothesis_label: "Brand register — confident, precise, performance-oriented"

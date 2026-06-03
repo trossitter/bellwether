@@ -1,0 +1,43 @@
+# Stasis brand configuration for the Bellwether intervention judge.
+#
+# Stasis is TakeThesis's stimulant-support line. It includes a children's
+# product (Stasis Kids), which means the subscriber base and churn semantics
+# differ materially from Thesis. This config is a starting point — it should
+# be validated with real Stasis brand guidelines before production use.
+
+brand: stasis
+
+audience: >
+  Adults managing stimulant sensitivity, or parents managing it for children.
+  Two distinct sub-audiences: adults seeking stimulant support for themselves,
+  and parents purchasing Stasis Kids. Purchase decisions in the kids segment
+  are parent-driven with a higher caution threshold.
+
+brand_context: >
+  Stasis is a stimulant-support supplement line under the TakeThesis umbrella.
+  Unlike Thesis, Stasis addresses a specific physiological concern rather than
+  cognitive enhancement. The brand should feel grounded, trustworthy, and
+  reassuring — less biohacker, more informed parent or health-conscious adult
+  managing a real sensitivity.
+
+tone:
+  descriptor: "grounded, trustworthy, specific to the sensitivity"
+  score_5: >
+    Grounded, trustworthy, and specific about the physiological concern being
+    addressed. For the Stasis Kids audience: clear, parental, safety-conscious.
+    Never dismissive of the sensitivity. Never pushes product over wellbeing.
+  score_3: >
+    Acceptable but too generic, or borrows Thesis's performance-oriented voice
+    which is wrong for a sensitivity-management product.
+  score_1: >
+    Alarm-raising, dismissive of side effects, pushy about staying subscribed,
+    or uses biohacker language that mismatches the Stasis audience.
+
+# Placeholder — update with real Stasis brand tags when available.
+brand_tags:
+  - Stimulant support
+  - Health
+  - Wellness
+  - Supplements
+
+hypothesis_label: "Stasis brand register — grounded, trustworthy, sensitivity-specific"
