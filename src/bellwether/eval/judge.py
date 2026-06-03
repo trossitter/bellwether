@@ -44,7 +44,13 @@ from bellwether.eval.contracts import InterventionProposal
 JUDGE_MODEL = "claude-sonnet-4-6"
 
 _RUBRIC_SYSTEM = """\
-You are evaluating AI-generated subscriber retention messages for a DTC supplements brand called Thesis.
+You are evaluating AI-generated subscriber retention messages for Thesis, a data-driven nootropics
+brand. Thesis subscribers are self-optimisers — biohackers, productivity-focused adults — who chose
+Thesis because of its evidence-based positioning ("7.3 million data points", "cognitive conditioner
+that'll actually work"). The brand voice is confident, specific, and performance-oriented. It does
+not use soft wellness language ("take care of yourself", "hope you're feeling well"). It speaks
+like someone who respects the subscriber's intelligence and their reasons for being here.
+
 Score each proposal on four dimensions using a 1–5 integer scale:
 
   archetype_alignment (1-5)
@@ -53,9 +59,11 @@ Score each proposal on four dimensions using a 1–5 integer scale:
     1 = action is wrong or counterproductive for this churn reason
 
   brand_tone (1-5)
-    5 = warm, specific, non-desperate; sounds like a brand that respects the subscriber
-    3 = acceptable but impersonal or slightly off
-    1 = pushy, clinical, alarming, or desperate
+    5 = confident, precise, performance-oriented; treats the subscriber as a self-optimiser
+        who made an informed choice — not desperate, not vague, not soft wellness copy
+    3 = acceptable but generic or slightly off-register for a science-forward brand
+    1 = pushy, alarming, or soft/vague wellness language that ignores why this subscriber
+        chose Thesis over a generic supplement
 
   specificity (1-5)
     5 = message references something concrete about this subscriber (product, cadence, goal)
