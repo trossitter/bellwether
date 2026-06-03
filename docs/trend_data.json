@@ -1,0 +1,312 @@
+[
+  {
+    "period": "2022-01-01",
+    "archetype": "life_change",
+    "n": 199
+  },
+  {
+    "period": "2022-01-01",
+    "archetype": "price",
+    "n": 189
+  },
+  {
+    "period": "2022-04-01",
+    "archetype": "life_change",
+    "n": 3188
+  },
+  {
+    "period": "2022-04-01",
+    "archetype": "price",
+    "n": 2926
+  },
+  {
+    "period": "2022-07-01",
+    "archetype": "efficacy",
+    "n": 3640
+  },
+  {
+    "period": "2022-07-01",
+    "archetype": "life_change",
+    "n": 2325
+  },
+  {
+    "period": "2022-07-01",
+    "archetype": "price",
+    "n": 4423
+  },
+  {
+    "period": "2022-10-01",
+    "archetype": "efficacy",
+    "n": 3460
+  },
+  {
+    "period": "2022-10-01",
+    "archetype": "fatigue",
+    "n": 1812
+  },
+  {
+    "period": "2022-10-01",
+    "archetype": "life_change",
+    "n": 5233
+  },
+  {
+    "period": "2022-10-01",
+    "archetype": "price",
+    "n": 5250
+  },
+  {
+    "period": "2023-01-01",
+    "archetype": "efficacy",
+    "n": 341
+  },
+  {
+    "period": "2023-01-01",
+    "archetype": "fatigue",
+    "n": 4183
+  },
+  {
+    "period": "2023-01-01",
+    "archetype": "life_change",
+    "n": 7181
+  },
+  {
+    "period": "2023-01-01",
+    "archetype": "price",
+    "n": 5740
+  },
+  {
+    "period": "2023-04-01",
+    "archetype": "efficacy",
+    "n": 347
+  },
+  {
+    "period": "2023-04-01",
+    "archetype": "fatigue",
+    "n": 5247
+  },
+  {
+    "period": "2023-04-01",
+    "archetype": "life_change",
+    "n": 4476
+  },
+  {
+    "period": "2023-04-01",
+    "archetype": "price",
+    "n": 6720
+  },
+  {
+    "period": "2023-07-01",
+    "archetype": "efficacy",
+    "n": 70
+  },
+  {
+    "period": "2023-07-01",
+    "archetype": "fatigue",
+    "n": 6085
+  },
+  {
+    "period": "2023-07-01",
+    "archetype": "life_change",
+    "n": 2625
+  },
+  {
+    "period": "2023-07-01",
+    "archetype": "price",
+    "n": 7071
+  },
+  {
+    "period": "2023-10-01",
+    "archetype": "fatigue",
+    "n": 7141
+  },
+  {
+    "period": "2023-10-01",
+    "archetype": "life_change",
+    "n": 1176
+  },
+  {
+    "period": "2023-10-01",
+    "archetype": "price",
+    "n": 7468
+  },
+  {
+    "period": "2024-01-01",
+    "archetype": "fatigue",
+    "n": 6479
+  },
+  {
+    "period": "2024-01-01",
+    "archetype": "life_change",
+    "n": 303
+  },
+  {
+    "period": "2024-01-01",
+    "archetype": "price",
+    "n": 6845
+  },
+  {
+    "period": "2024-04-01",
+    "archetype": "fatigue",
+    "n": 5599
+  },
+  {
+    "period": "2024-04-01",
+    "archetype": "life_change",
+    "n": 491
+  },
+  {
+    "period": "2024-04-01",
+    "archetype": "price",
+    "n": 6619
+  },
+  {
+    "period": "2024-07-01",
+    "archetype": "fatigue",
+    "n": 4202
+  },
+  {
+    "period": "2024-07-01",
+    "archetype": "life_change",
+    "n": 425
+  },
+  {
+    "period": "2024-07-01",
+    "archetype": "price",
+    "n": 5295
+  },
+  {
+    "period": "2024-10-01",
+    "archetype": "fatigue",
+    "n": 3894
+  },
+  {
+    "period": "2024-10-01",
+    "archetype": "life_change",
+    "n": 387
+  },
+  {
+    "period": "2024-10-01",
+    "archetype": "price",
+    "n": 4953
+  },
+  {
+    "period": "2025-01-01",
+    "archetype": "fatigue",
+    "n": 3307
+  },
+  {
+    "period": "2025-01-01",
+    "archetype": "involuntary",
+    "n": 1917
+  },
+  {
+    "period": "2025-01-01",
+    "archetype": "life_change",
+    "n": 270
+  },
+  {
+    "period": "2025-01-01",
+    "archetype": "price",
+    "n": 3863
+  },
+  {
+    "period": "2025-04-01",
+    "archetype": "fatigue",
+    "n": 2664
+  },
+  {
+    "period": "2025-04-01",
+    "archetype": "involuntary",
+    "n": 2081
+  },
+  {
+    "period": "2025-04-01",
+    "archetype": "life_change",
+    "n": 303
+  },
+  {
+    "period": "2025-04-01",
+    "archetype": "price",
+    "n": 2956
+  },
+  {
+    "period": "2025-07-01",
+    "archetype": "fatigue",
+    "n": 2582
+  },
+  {
+    "period": "2025-07-01",
+    "archetype": "involuntary",
+    "n": 1632
+  },
+  {
+    "period": "2025-07-01",
+    "archetype": "life_change",
+    "n": 283
+  },
+  {
+    "period": "2025-07-01",
+    "archetype": "price",
+    "n": 3101
+  },
+  {
+    "period": "2025-10-01",
+    "archetype": "fatigue",
+    "n": 2555
+  },
+  {
+    "period": "2025-10-01",
+    "archetype": "involuntary",
+    "n": 1921
+  },
+  {
+    "period": "2025-10-01",
+    "archetype": "life_change",
+    "n": 233
+  },
+  {
+    "period": "2025-10-01",
+    "archetype": "price",
+    "n": 3321
+  },
+  {
+    "period": "2026-01-01",
+    "archetype": "fatigue",
+    "n": 2806
+  },
+  {
+    "period": "2026-01-01",
+    "archetype": "involuntary",
+    "n": 1884
+  },
+  {
+    "period": "2026-01-01",
+    "archetype": "life_change",
+    "n": 265
+  },
+  {
+    "period": "2026-01-01",
+    "archetype": "price",
+    "n": 4405
+  },
+  {
+    "period": "2026-04-01",
+    "archetype": "fatigue",
+    "n": 447
+  },
+  {
+    "period": "2026-04-01",
+    "archetype": "involuntary",
+    "n": 484
+  },
+  {
+    "period": "2026-04-01",
+    "archetype": "life_change",
+    "n": 73
+  },
+  {
+    "period": "2026-04-01",
+    "archetype": "price",
+    "n": 858
+  }
+]
