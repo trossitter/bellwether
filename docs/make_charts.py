@@ -32,7 +32,7 @@ GRID        = "#EBEBEB"
 TEXT        = "#2C2C2C"
 TEXT_MUTED  = "#888888"
 DPI         = 160
-OPEN_AFTER  = True
+OPEN_CHARTS = [1, 4]   # which chart numbers to open in Preview after saving ([] = none)
 
 ARCH_COLORS = {
     "price":       "#4F86C6",
@@ -347,12 +347,11 @@ def chart_4():
 # RUN
 # ─────────────────────────────────────────────────────────────────────────────
 
-chart_1()
-chart_2()
-chart_3()
-chart_4()
+charts = [(1, chart_1, C1_OUT), (2, chart_2, C2_OUT),
+          (3, chart_3, C3_OUT), (4, chart_4, C4_OUT)]
 
-if OPEN_AFTER:
-    import subprocess
-    for p in [C1_OUT, C2_OUT, C3_OUT]:
-        subprocess.run(["open", str(p)])
+import subprocess
+for n, fn, out in charts:
+    fn()
+    if n in OPEN_CHARTS:
+        subprocess.run(["open", str(out)])
