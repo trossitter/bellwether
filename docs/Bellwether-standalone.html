@@ -1685,7 +1685,23 @@ function DecisionSection({ fleet, subscribers, archetypes, tierOf, gaugeStyle })
           <div className="detail-main">
             <div className="dos-head">
               <div className="dos-id">
-                <div className="dos-arch"><span className="tag">{sub.archetype}</span></div>
+                <div className="dos-arch">
+                  <span className="tag">{sub.archetype}</span>
+                  {(() => {
+                    const more = (prevalence[sub.archetypeKey]?.atRisk || 1) - 1;
+                    return more > 0 ? (
+                      <button onClick={() => setSortMode("reason")} style={{
+                        appearance:"none",border:"none",background:"none",cursor:"pointer",
+                        fontFamily:"var(--font-mono)",fontSize:"11px",color:"var(--ink-3)",
+                        letterSpacing:"0.06em",padding:"0 0 0 12px",
+                        textDecoration:"underline",textDecorationStyle:"dotted",
+                        textUnderlineOffset:"3px"
+                      }}>
+                        {more.toLocaleString()} more with this reason →
+                      </button>
+                    ) : null;
+                  })()}
+                </div>
                 <h3 className="dos-name">{sub.name}</h3>
                 <div className="dos-loc">{sub.location}</div>
               </div>
