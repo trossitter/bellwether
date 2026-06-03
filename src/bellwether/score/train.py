@@ -20,14 +20,21 @@ thresholds — not rankings — to determine intervention urgency.
 from __future__ import annotations
 
 import pickle
+import uuid
 from datetime import date
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import shap
 from lightgbm import LGBMClassifier
 from sklearn.isotonic import IsotonicRegression
 
+from bellwether.eval.metrics import (
+    brier_score, expected_calibration_error, pr_auc,
+    pr_auc_subgroup_gap, shap_quiz_share,
+)
+from bellwether.eval.persist import ensure_table, record_metric
 from bellwether.labels.observation import build_labels, training_observation_dates
 from bellwether.score._features import assemble
 
@@ -107,15 +114,54 @@ def train(horizon_days: int = HORIZON_DAYS) -> Path:
     isotonic = IsotonicRegression(out_of_bounds="clip")
     isotonic.fit(val_raw, y_val)
 
+    # ── Evaluation metrics written to BELLWETHER_EVAL_RUNS ──────────────────
+    run_id = str(uuid.uuid4())
+    val_cal = isotonic.predict(val_raw)
+    quiz_mask = val_df["no_quiz_proxy"].fillna(True).astype(bool)
+
+    explainer   = shap.TreeExplainer(lgbm)
+    shap_values = explainer.shap_values(X_val)
+    shap_matrix = shap_values[1] if isinstance(shap_values, list) else shap_values
+
+    ensure_table()
+
+    metrics = [
+        ("pr_auc",             pr_auc(y_val.values, val_cal),                             0.40),
+        ("brier_score",        brier_score(y_val.values, val_cal),                        0.12),
+        ("ece",                expected_calibration_error(y_val.values, val_cal),         0.05),
+        ("shap_quiz_share",    shap_quiz_share(shap_matrix, FEATURE_COLS, set(QUIZ_FEATURE_COLS)), 0.30),
+    ]
+    _, _, gap = pr_auc_subgroup_gap(y_val.values, val_cal, (~quiz_mask).values)
+    metrics.append(("pr_auc_subgroup_gap", gap if not np.isnan(gap) else 0.0, 0.08))
+
+    git_sha = _git_sha()
+    for name, value, threshold in metrics:
+        record_metric(run_id, "score", "offline", name, value,
+                      threshold=threshold, n_subscribers=len(X_val),
+                      model_version=run_id[:8],
+                      notes=f"git={git_sha}" if git_sha else None)
+        status = "PASS" if (value <= threshold if name in {"brier_score","ece","shap_quiz_share","pr_auc_subgroup_gap"} else value >= threshold) else "FAIL"
+        print(f"  {name:<28} {value:.4f}  [{status}]")
+
     artifact = MODEL_DIR / f"bellwether_h{horizon_days}.pkl"
     with open(artifact, "wb") as f:
         pickle.dump({"lgbm": lgbm, "isotonic": isotonic,
                      "feature_cols": FEATURE_COLS,
                      "quiz_feature_cols": QUIZ_FEATURE_COLS,
-                     "horizon_days": horizon_days, "val_date": str(val_date)}, f)
+                     "horizon_days": horizon_days, "val_date": str(val_date),
+                     "run_id": run_id}, f)
 
-    print(f"Model saved: {artifact}")
+    print(f"Model saved: {artifact}  (run_id={run_id[:8]})")
     return artifact
+
+
+def _git_sha() -> str | None:
+    import subprocess
+    try:
+        return subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                              capture_output=True, text=True, timeout=5).stdout.strip() or None
+    except Exception:
+        return None
 
 
 def _load_window(obs_date: date, horizon_days: int) -> pd.DataFrame:
