@@ -77,7 +77,7 @@ ARCH_LABELS = {
 }
 
 # Order of archetypes on the charts (left to right / bottom to top)
-ARCH_ORDER = ["life_change", "involuntary", "efficacy", "fatigue", "price", "stimulant"]
+ARCH_ORDER = ["life_change", "involuntary", "efficacy", "fatigue", "price"]
 
 # Background / panel colours
 COLOR_BG    = "#0F0F1E"
