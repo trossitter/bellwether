@@ -231,26 +231,19 @@ def chart_3():
 
         ax.plot(dates, smoothed, color=color, linewidth=2.2, zorder=4)
 
-        # Label every line at its endpoint — except Efficacy, which peaked in
-        # 2022 and is now resolved; label it at the peak with context instead.
         final_val = smoothed[-1]
         if arch == "efficacy":
-            peak_i   = int(np.argmax(smoothed))
-            peak_val = smoothed[peak_i]
-            peak_dt  = dates[peak_i]
-            peak_yr  = peak_dt.strftime("%Y")
-            ax.annotate(
-                f"Efficacy — peaked {peak_val:.0f}% in {peak_yr}, now resolved",
-                xy=(peak_dt, peak_val),
-                xytext=(peak_dt, peak_val + 6),
-                ha="center", va="bottom", fontsize=8.5,
-                color=color, fontweight="600",
-                arrowprops=dict(arrowstyle="-", color=color, lw=1.0),
-            )
+            # Mark the 2022 peak with a dot — presenter can speak to it
+            peak_i = int(np.argmax(smoothed))
+            ax.plot(dates[peak_i], smoothed[peak_i],
+                    "o", color=color, markersize=7, zorder=5)
+            end_label = "  Efficacy (insignificant since 2023)  0%"
         else:
-            ax.text(dates[-1], final_val, f"  {ARCH_LABELS[arch]}  {final_val:.0f}%",
-                    ha="left", va="center", fontsize=8.5,
-                    color=color, fontweight="600")
+            end_label = f"  {ARCH_LABELS[arch]}  {final_val:.0f}%"
+
+        ax.text(dates[-1], final_val, end_label,
+                ha="left", va="center", fontsize=8.5,
+                color=color, fontweight="600")
 
     import matplotlib.dates as mdates
 
